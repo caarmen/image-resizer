@@ -12,7 +12,10 @@ from fastapi import BackgroundTasks, FastAPI
 from fastapi.params import Query
 from fastapi.responses import FileResponse
 
-app = FastAPI()
+app = FastAPI(
+    title="Image resizer",
+    description="Api to reisze an image",
+)
 
 
 class GifImage:
@@ -53,7 +56,8 @@ async def resize(
     height: int | None = Query(default=None, gt=0, lt=1024),
 ):
     """
-    Endpoint to resize an image
+    Endpoint to resize an image.
+
     :param background_tasks: provided by Fast API
     :param image_url: the url of the image to resize
     :param width: the width of the new image
