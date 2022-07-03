@@ -24,14 +24,13 @@ docker build -t imageresizer .
 docker run --detach --publish 8000:8000 imageresizer
 ```
 
-If you want to use a port other than `8000`, you can specify the port to the `docker build` command
-with `--build-arg PORT=<port>`.
+If you want the server to be available on a port other than `8000`,
+you can specify the port you want in the `--publish` argument.
 
 For example, to use port `8102` instead:
 
 ```bash
-docker build -t imageresizer --build-arg PORT=8102 .
-docker run --detach --publish 8102:8102  imageresizer
+docker run --detach --publish 8102:8000 imageresizer
 ```
 
 To stop the running imageresizer containers:
