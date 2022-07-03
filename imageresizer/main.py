@@ -28,15 +28,18 @@ class GifImage:
         return self
 
     def save(self, output_path: str, format: str):
-        self._frames[0].save(output_path, append_images=self._frames[1:], format=format, save_all=True)
+        self._frames[0].save(
+            output_path, append_images=self._frames[1:], format=format, save_all=True
+        )
 
 
 @app.get("/resize")
 async def resize(
-        background_tasks: BackgroundTasks,
-        image_url: str,
-        width: int | None = Query(default=None, gt=0, lt=1024),
-        height: int | None = Query(default=None, gt=0, lt=1024)):
+    background_tasks: BackgroundTasks,
+    image_url: str,
+    width: int | None = Query(default=None, gt=0, lt=1024),
+    height: int | None = Query(default=None, gt=0, lt=1024),
+):
     image = Image.open(urlopen(image_url))
     with NamedTemporaryFile(delete=False) as output_file:
         resized_width = width if width else image.width
@@ -50,7 +53,7 @@ async def resize(
         image.save(output_file.name, image_format)
 
         background_tasks.add_task(os.unlink, output_file.name)
-       
+
         return FileResponse(output_file.name)
         # TODO replace temp file with cache
 
