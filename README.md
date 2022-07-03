@@ -42,7 +42,7 @@ for container in $(docker ps --filter ancestor=imageresizer --format="{{.ID}}");
 To stop and delete all the imageresizer containers:
 
 ```bash
-for container in $(docker ps --all --filter ancestor=imageresizer --format="{{.ID}}"); do docker stop $container; docker rm $container;  done 
+bash scripts/docker_remove_containers.bash
 ```
 
 ## Usage
@@ -54,6 +54,20 @@ Use the `resize` endpoint.
 Example resizing the [GitHub logo](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png) to 50x100:
 
 http://127.0.0.1:8000/resize?image_url=https%3A%2F%2Fgithub.githubassets.com%2Fimages%2Fmodules%2Flogos_page%2FGitHub-Mark.png&width=50&height=100
+
+## Deleting old images
+
+### Locally
+
+```bash
+python -m imageresizer.purge --max-age <age in seconds>
+```
+
+### Using docker
+
+```bash
+bash scripts/docker_purge_images.bash [max age in seconds (default is 86400)]
+```
 
 ## Generated API documentation
 

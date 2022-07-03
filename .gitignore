@@ -2,3 +2,6 @@ __pycache__
 .idea/
 .coverage
 reports/
+image-resizer.db
+image-resizer.log
+purge.log
