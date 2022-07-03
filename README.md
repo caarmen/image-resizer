@@ -17,6 +17,8 @@ uvicorn imageresizer.main:app
 
 ### Using docker
 ```commandline
+git clone https://github.com/caarmen/image-resizer.git
+cd image-resizer
 docker build -t imageresizer .
 docker run --detach --publish 8000:8000 imageresizer
 ```
