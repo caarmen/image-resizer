@@ -27,8 +27,11 @@ async def resize(
     Endpoint to resize an image.
 
     :param image_url: the url of the image to resize
+
     :param width: the width of the new image
+
     :param height: the height of the new image
+
     :return: a Response containing the new image
     """
     resized_image_path = service.resize(image_url, width, height)
