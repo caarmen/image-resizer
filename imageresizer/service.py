@@ -29,7 +29,9 @@ class GifImage:
         """
         for i in range(self._source.n_frames):
             self._source.seek(i)
-            self._frames.append(self._source.resize(size, resample=Image.BICUBIC))
+            self._frames.append(
+                self._source.resize(size, resample=Image.Resampling.BICUBIC)
+            )
         return self
 
     def save(self, output_path: str, image_format: str):
