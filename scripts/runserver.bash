@@ -1,0 +1,1 @@
+uvicorn imageresizer.main:app
