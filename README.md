@@ -4,14 +4,18 @@ An endpoint, using Fast API, that allows resizing an image.
 
 ## Usage:
 
-Install requirements:
+Run the server:
+
+### Locally
 ```commandline
 pip install -r requirements/prod.txt
+uvicorn imageresizer.main:app
 ```
 
-Run the server:
+### Using docker
 ```commandline
-uvicorn imageresizer.main:app
+docker build -t imageresizer .
+docker run --detach --publish 8000:8000 imageresizer
 ```
 
 Browse the api docs at http://127.0.0.1:8000/docs
