@@ -26,7 +26,6 @@ async def resize(
     """
     Endpoint to resize an image.
 
-    :param background_tasks: provided by Fast API
     :param image_url: the url of the image to resize
     :param width: the width of the new image
     :param height: the height of the new image
