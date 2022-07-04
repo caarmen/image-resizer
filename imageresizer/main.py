@@ -9,10 +9,11 @@ from fastapi.params import Query, Depends
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
-from imageresizer import service, purge
+from imageresizer import purge
 from imageresizer.repository import models
 from imageresizer.repository.database import SessionLocal, engine
-from imageresizer.service import ImageFormat
+from imageresizer.service import service
+from imageresizer.service.types import ImageFormat
 
 logging.basicConfig(filename="image-resizer.log", level=logging.INFO)
 

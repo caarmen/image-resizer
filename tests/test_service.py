@@ -3,7 +3,7 @@ Image resizer tests
 """
 from typing import Optional
 
-from imageresizer.service import get_resized_size, Size
+from imageresizer.service.service import get_resized_size, Size
 
 
 def _test_get_resized_size(

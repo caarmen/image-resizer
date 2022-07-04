@@ -1,8 +1,6 @@
 """
 Image resizing service
 """
-import dataclasses
-from enum import Enum
 from os.path import exists
 from tempfile import NamedTemporaryFile
 from typing import Optional
@@ -14,42 +12,8 @@ from fastapi.params import Query
 from sqlalchemy.orm import Session
 
 from imageresizer.repository import crud
-
-Size = tuple[int, int]
-
-
-class GifImage:
-    """
-    An image-like class with resize and save functions
-    """
-
-    def __init__(self, source: GifImageFile):
-        self._source = source
-        self._frames = []
-
-    def resize(self, size: Size):
-        """
-        Resize the frames of this image
-        :param size: The requested size in pixels
-        :return: this instance
-        """
-        for i in range(self._source.n_frames):
-            self._source.seek(i)
-            self._frames.append(
-                self._source.resize(size, resample=Image.Resampling.BICUBIC)
-            )
-        return self
-
-    def save(self, output_path: str, image_format: str):
-        """
-        Saves this image under the given filename and format.
-        """
-        self._frames[0].save(
-            output_path,
-            append_images=self._frames[1:],
-            format=image_format,
-            save_all=True,
-        )
+from imageresizer.service.animatedimage import AnimatedImage
+from imageresizer.service.types import Size, ImageFormat, ImageResponseData
 
 
 def _is_valid_dimension(dimension):
@@ -89,30 +53,6 @@ def get_resized_size(
     return int(request_height * source_aspect_ratio), request_height
 
 
-@dataclasses.dataclass
-class ImageResponse:
-    """
-    Image response data
-    """
-
-    file: str
-    mime_type: str
-
-
-class ImageFormat(str, Enum):
-    """
-    Supported image formats
-    """
-
-    BMP = "bmp"
-    GIF = "gif"
-    JPEG = "jpeg"
-    PDF = "pdf"
-    PNG = "png"
-    TIFF = "tiff"
-    WEBP = "webp"
-
-
 def _get_mime_type(image_format: str) -> str:
     """
     :return: the mime type for the given image format
@@ -128,7 +68,7 @@ def resize(
     width: int | None = Query(default=None, gt=0, lt=1024),
     height: int | None = Query(default=None, gt=0, lt=1024),
     image_format: ImageFormat | None = Query(default=None),
-) -> ImageResponse:
+) -> ImageResponseData:
     """
     Resize an image.
 
@@ -143,7 +83,7 @@ def resize(
         session, url=image_url, width=width, height=height, image_format=image_format
     )
     if db_resized_image and exists(db_resized_image.file):
-        return ImageResponse(
+        return ImageResponseData(
             db_resized_image.file, _get_mime_type(db_resized_image.image_format)
         )
     with Image.open(urlopen(image_url)) as image:
@@ -154,7 +94,7 @@ def resize(
             resized_image_format = image_format.name if image_format else image.format
 
             if isinstance(image, GifImageFile) and image.n_frames:
-                image = GifImage(image)
+                image = AnimatedImage(image)
 
             image = image.resize(resized_size)
             image.save(output_file.name, resized_image_format)
@@ -172,6 +112,6 @@ def resize(
                     image_format=image_format,
                 )
 
-            return ImageResponse(
+            return ImageResponseData(
                 file=output_file.name, mime_type=_get_mime_type(image_format)
             )
