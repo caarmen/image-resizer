@@ -18,6 +18,7 @@ class ResizedImage(Base):
     width = Column(Integer)
     height = Column(Integer)
     file = Column(String)
+    image_format = Column(String)
     datetime = Column(DateTime)
 
 
@@ -26,5 +27,6 @@ Index(
     ResizedImage.url,
     ResizedImage.width,
     ResizedImage.height,
+    ResizedImage.image_format,
     unique=True,
 )

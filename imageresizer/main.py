@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 from imageresizer import service, purge
 from imageresizer.repository import models
 from imageresizer.repository.database import SessionLocal, engine
+from imageresizer.service import ImageFormat
 
 logging.basicConfig(filename="image-resizer.log", level=logging.INFO)
 
@@ -40,6 +41,7 @@ async def resize(
     image_url: str,
     width: int | None = Query(default=None, gt=0, lt=1024),
     height: int | None = Query(default=None, gt=0, lt=1024),
+    image_format: ImageFormat | None = Query(default=None),
     db_session: Session = Depends(_get_session),
 ):
     """
@@ -51,10 +53,12 @@ async def resize(
 
     :param height: the height of the new image
 
+    :param image_format: the format of the resized image. Defaults to the format of the source image
+
     :return: a Response containing the new image
     """
-    resized_image_path = service.resize(db_session, image_url, width, height)
-    return FileResponse(resized_image_path)
+    resized_image = service.resize(db_session, image_url, width, height, image_format)
+    return FileResponse(resized_image.file, media_type=resized_image.mime_type)
 
 
 if __name__ == "__main__":
