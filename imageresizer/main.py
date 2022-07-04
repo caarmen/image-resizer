@@ -1,14 +1,21 @@
 """
 Server that provides an endpoint to resize an image
 """
-import os
+import logging
 
 import uvicorn
-from fastapi import BackgroundTasks, FastAPI
-from fastapi.params import Query
+from fastapi import FastAPI
+from fastapi.params import Query, Depends
 from fastapi.responses import FileResponse
+from sqlalchemy.orm import Session
 
-from imageresizer import service
+from imageresizer import service, purge
+from imageresizer.repository import models
+from imageresizer.repository.database import SessionLocal, engine
+
+logging.basicConfig(filename="image-resizer.log", level=logging.INFO)
+
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Image resizer",
@@ -16,12 +23,24 @@ app = FastAPI(
 )
 
 
+def _get_session():
+    db_session = SessionLocal()
+    try:
+        yield db_session
+    finally:
+        db_session.close()
+
+
+with SessionLocal() as session:
+    purge.purge_old_images(session)
+
+
 @app.get("/resize")
 async def resize(
-    background_tasks: BackgroundTasks,
     image_url: str,
     width: int | None = Query(default=None, gt=0, lt=1024),
     height: int | None = Query(default=None, gt=0, lt=1024),
+    db_session: Session = Depends(_get_session),
 ):
     """
     Endpoint to resize an image.
@@ -34,8 +53,7 @@ async def resize(
 
     :return: a Response containing the new image
     """
-    resized_image_path = service.resize(image_url, width, height)
-    background_tasks.add_task(os.unlink, resized_image_path)
+    resized_image_path = service.resize(db_session, image_url, width, height)
     return FileResponse(resized_image_path)
 
 
