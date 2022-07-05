@@ -24,6 +24,8 @@ docker build -t imageresizer .
 docker run --detach --publish 8000:8000 imageresizer
 ```
 
+#### Custom port
+
 If you want the server to be available on a port other than `8000`,
 you can specify the port you want in the `--publish` argument.
 
@@ -31,6 +33,16 @@ For example, to use port `8102` instead:
 
 ```bash
 docker run --detach --publish 8102:8000 imageresizer
+```
+
+#### Custom cache folder
+
+If you want to store the image resizer cache on the host machine,
+you can specify this with the `--volume` argument, mapping the host folder you want (ex: `/tmp/foo`)
+to the folder inside the docker image where the image cache is stored (`/var/cache/image-resizer`):
+
+```bash
+docker run --detach --volume /tmp/foo:/var/cache/image-resizer --publish 8000:8000 imageresizer
 ```
 
 To stop the running imageresizer containers:
