@@ -2,6 +2,7 @@
 Server that provides an endpoint to resize an image
 """
 import logging
+from pathlib import Path
 
 import uvicorn
 from fastapi import FastAPI
@@ -14,6 +15,7 @@ from imageresizer.repository import models
 from imageresizer.repository.database import SessionLocal, engine
 from imageresizer.service import service
 from imageresizer.service.types import ImageFormat
+from imageresizer.settings import settings
 
 logging.basicConfig(filename="image-resizer.log", level=logging.INFO)
 

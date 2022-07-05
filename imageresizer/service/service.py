@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session
 from imageresizer.repository import crud
 from imageresizer.service.animatedimage import AnimatedImage
 from imageresizer.service.types import Size, ImageFormat, ImageResponseData
+from imageresizer.settings import settings
 
 
 def _is_valid_dimension(dimension):
@@ -87,7 +88,9 @@ def resize(
             db_resized_image.file, _get_mime_type(db_resized_image.image_format)
         )
     with Image.open(urlopen(image_url)) as image:
-        with NamedTemporaryFile(delete=False) as output_file:
+        with NamedTemporaryFile(
+            delete=False, dir=settings.cache_image_dir
+        ) as output_file:
             resized_size = get_resized_size(
                 source_size=image.size, request_width=width, request_height=height
             )
