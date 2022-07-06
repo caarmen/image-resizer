@@ -18,6 +18,7 @@ from imageresizer.service.types import (
     ImageFormat,
     ImageResponseData,
     ResizedImageLookup,
+    ScaleType,
 )
 from imageresizer.settings import settings
 
@@ -30,6 +31,7 @@ def get_resized_size(
     source_size: Size,
     request_width: Optional[int],
     request_height: Optional[int],
+    scale_type: ScaleType,
 ) -> Size:
     """
     Calculate a new resized size based on a source size and optional new width and height.
@@ -43,18 +45,33 @@ def get_resized_size(
     :param source_size: the size of the source image
     :param request_width: the requested width of the target image
     :param request_height: the requested height of the target image
+    :param scale_type: controls how the image should be resized to match the requested
+    width and height
     :return: the target size the image should be resized to
     """
     valid_width = _is_valid_dimension(request_width)
     valid_height = _is_valid_dimension(request_height)
-    if valid_width and valid_height:
-        return request_width, request_height
+    # No dimensions requested: return the original size
     if not valid_width and not valid_height:
         return source_size
 
+    # Only one dimension requested: calculate the other one from
+    # the original aspect ratio and the one dimension which is provided
     source_aspect_ratio = source_size[0] / source_size[1]
+    if valid_width and not valid_height:
+        return request_width, int(request_width / source_aspect_ratio)
+    if not valid_width and valid_height:
+        return int(request_height * source_aspect_ratio), request_height
 
-    if valid_width:
+    # Both dimensions provided
+
+    if scale_type == ScaleType.FIT_XY:
+        return request_width, request_height
+
+    # Else fit the image inside the bounds of the requested dimensions,
+    # preserving the original aspect ratio
+    dest_aspect_ratio = request_width / request_height
+    if source_aspect_ratio > dest_aspect_ratio:
         return request_width, int(request_width / source_aspect_ratio)
     return int(request_height * source_aspect_ratio), request_height
 
@@ -91,6 +108,7 @@ def resize(session: Session, lookup: ResizedImageLookup) -> ImageResponseData:
                 source_size=image.size,
                 request_width=lookup.width,
                 request_height=lookup.height,
+                scale_type=lookup.scale_type,
             )
             resized_image_format = (
                 lookup.image_format.name if lookup.image_format else image.format

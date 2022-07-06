@@ -3,10 +3,20 @@ Provide CRUD operations for resized images
 """
 import dataclasses
 from datetime import datetime
+from enum import Enum
 
 from sqlalchemy.orm import Session
 
 from imageresizer.repository import models
+
+
+class ScaleType(Enum):
+    """
+    Supported scaling types
+    """
+
+    FIT_XY = 1
+    FIT_PRESERVE_ASPECT_RATIO = 2
 
 
 @dataclasses.dataclass
@@ -19,6 +29,7 @@ class ResizedImageLookup:
     width: int = 0
     height: int = 0
     image_format: str = None
+    scale_type: ScaleType = None
 
 
 def get_resized_image(
@@ -35,6 +46,7 @@ def get_resized_image(
             models.ResizedImage.width == lookup.width,
             models.ResizedImage.height == lookup.height,
             models.ResizedImage.image_format == lookup.image_format,
+            models.ResizedImage.scale_type == lookup.scale_type.value,
         )
         .first()
     )
@@ -51,6 +63,7 @@ def create_resized_image(
         width=lookup.width,
         height=lookup.height,
         image_format=lookup.image_format,
+        scale_type=lookup.scale_type.value,
         file=file,
         datetime=datetime.now(),
     )

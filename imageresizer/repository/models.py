@@ -17,7 +17,9 @@ class ResizedImage(Base):
     url = Column(String)
     width = Column(Integer)
     height = Column(Integer)
+    # Would be better to have an enum for vaild image_format values
     image_format = Column(String)
+    scale_type = Column(Integer)
     file = Column(String)
     datetime = Column(DateTime)
 
@@ -28,5 +30,6 @@ Index(
     ResizedImage.width,
     ResizedImage.height,
     ResizedImage.image_format,
+    ResizedImage.scale_type,
     unique=True,
 )

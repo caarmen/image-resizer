@@ -13,7 +13,7 @@ from imageresizer import purge
 from imageresizer.repository import models
 from imageresizer.repository.database import SessionLocal, engine
 from imageresizer.service import service
-from imageresizer.service.types import ImageFormat, ResizedImageLookup
+from imageresizer.service.types import ImageFormat, ResizedImageLookup, ScaleType
 
 logging.basicConfig(filename="image-resizer.log", level=logging.INFO)
 
@@ -37,12 +37,14 @@ with SessionLocal() as session:
     purge.purge_old_images(session)
 
 
+# pylint: disable=too-many-arguments
 @app.get("/resize")
 async def resize(
     image_url: str,
     width: int | None = Query(default=None, gt=0, lt=1024),
     height: int | None = Query(default=None, gt=0, lt=1024),
     image_format: ImageFormat | None = Query(default=None),
+    scale_type: ScaleType | None = Query(default=ScaleType.FIT_XY),
     db_session: Session = Depends(_get_session),
 ):
     """
@@ -56,6 +58,9 @@ async def resize(
 
     :param image_format: the format of the resized image. Defaults to the format of the source image
 
+    :param scale_type: controls how the image should be resized to match
+    the requested width and height
+
     :return: a Response containing the new image
     """
     resized_image = service.resize(
@@ -65,6 +70,7 @@ async def resize(
             width=width,
             height=height,
             image_format=image_format,
+            scale_type=scale_type,
         ),
     )
     return FileResponse(resized_image.file, media_type=resized_image.mime_type)
