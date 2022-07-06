@@ -97,9 +97,7 @@ def resize(session: Session, lookup: ResizedImageLookup) -> ImageResponseData:
     crud_lookup = mapping.map_lookup(lookup)
     db_resized_image = crud.get_resized_image(session, crud_lookup)
     if db_resized_image and exists(db_resized_image.file):
-        return ImageResponseData(
-            db_resized_image.file, _get_mime_type(db_resized_image.image_format)
-        )
+        return ImageResponseData(db_resized_image.file, db_resized_image.mime_type)
     with Image.open(urlopen(lookup.url)) as image:
         with NamedTemporaryFile(
             delete=False, dir=settings.cache_image_dir
@@ -119,13 +117,14 @@ def resize(session: Session, lookup: ResizedImageLookup) -> ImageResponseData:
 
             image = image.resize(resized_size)
             image.save(output_file.name, resized_image_format)
+            mime_type = _get_mime_type(resized_image_format)
             if db_resized_image:
                 crud.update_resized_image(
                     session, db_resized_image, file=output_file.name
                 )
             else:
-                crud.create_resized_image(session, crud_lookup, file=output_file.name)
+                crud.create_resized_image(
+                    session, crud_lookup, file=output_file.name, mime_type=mime_type
+                )
 
-            return ImageResponseData(
-                file=output_file.name, mime_type=_get_mime_type(resized_image_format)
-            )
+            return ImageResponseData(file=output_file.name, mime_type=mime_type)

@@ -53,7 +53,10 @@ def get_resized_image(
 
 
 def create_resized_image(
-    session: Session, lookup: ResizedImageLookup, file: str
+    session: Session,
+    lookup: ResizedImageLookup,
+    file: str,
+    mime_type: str,
 ) -> models.ResizedImage:
     """
     Create the resized image in the database
@@ -65,6 +68,7 @@ def create_resized_image(
         image_format=lookup.image_format,
         scale_type=lookup.scale_type.value,
         file=file,
+        mime_type=mime_type,
         datetime=datetime.now(),
     )
     session.add(db_resized_image)

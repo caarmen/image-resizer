@@ -21,6 +21,7 @@ class ResizedImage(Base):
     image_format = Column(String)
     scale_type = Column(Integer)
     file = Column(String)
+    mime_type = Column(String)
     datetime = Column(DateTime)
 
 
