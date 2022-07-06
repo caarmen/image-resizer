@@ -31,7 +31,17 @@ class ImageFormat(str, Enum):
     WEBP = "webp"
 
 
+class ScaleType(str, Enum):
+    """
+    Supported scale types
+    """
+
+    FIT_XY = "fit_xy"
+    FIT_PRESERVE_ASPECT_RATIO = "fit_preserve_aspect_ratio"
+
+
 @dataclasses.dataclass
+# pylint: disable=duplicate-code
 class ResizedImageLookup:
     """
     Fields which uniquely identify a resised image in the database
@@ -41,3 +51,4 @@ class ResizedImageLookup:
     width: int = 0
     height: int = 0
     image_format: ImageFormat = None
+    scale_type: ScaleType = ScaleType.FIT_XY
