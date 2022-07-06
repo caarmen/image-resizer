@@ -865,6 +865,12 @@ ul.nav-tabs {
   "description" : "Supported image formats",
   "enum" : [ "bmp", "gif", "jpeg", "pdf", "png", "tiff", "webp" ]
 };
+    defs["ScaleType"] = {
+  "title" : "ScaleType",
+  "type" : "string",
+  "description" : "Supported scale types",
+  "enum" : [ "fit_xy", "fit_preserve_aspect_ratio" ]
+};
     defs["ValidationError"] = {
   "title" : "ValidationError",
   "required" : [ "loc", "msg", "type" ],
@@ -955,6 +961,9 @@ ul.nav-tabs {
 
 :param image_format: the format of the resized image. Defaults to the format of the source image
 
+:param scale_type: controls how the image should be resized to match
+the requested width and height
+
 :return: a Response containing the new image</p>
                         <p></p>
                         <br />
@@ -981,7 +990,7 @@ ul.nav-tabs {
                           <div class="tab-pane active" id="examples-Default-resizeResizeGet-0-curl">
                             <pre class="prettyprint"><code class="language-bsh">curl -X GET \
  -H "Accept: application/json" \
- "http://localhost/resize?image_url=imageUrl_example&width=56&height=56&image_format="
+ "http://localhost/resize?image_url=imageUrl_example&width=56&height=56&image_format=&scale_type="
 </code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Default-resizeResizeGet-0-java">
@@ -1002,9 +1011,10 @@ public class DefaultApiExample {
         Integer width = 56; // Integer | 
         Integer height = 56; // Integer | 
         ImageFormat imageFormat = ; // ImageFormat | 
+        ScaleType scaleType = ; // ScaleType | 
 
         try {
-            oas_any_type_not_mapped result = apiInstance.resizeResizeGet(imageUrl, width, height, imageFormat);
+            oas_any_type_not_mapped result = apiInstance.resizeResizeGet(imageUrl, width, height, imageFormat, scaleType);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling DefaultApi#resizeResizeGet");
@@ -1025,9 +1035,10 @@ public class DefaultApiExample {
         Integer width = 56; // Integer | 
         Integer height = 56; // Integer | 
         ImageFormat imageFormat = ; // ImageFormat | 
+        ScaleType scaleType = ; // ScaleType | 
 
         try {
-            oas_any_type_not_mapped result = apiInstance.resizeResizeGet(imageUrl, width, height, imageFormat);
+            oas_any_type_not_mapped result = apiInstance.resizeResizeGet(imageUrl, width, height, imageFormat, scaleType);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling DefaultApi#resizeResizeGet");
@@ -1049,12 +1060,14 @@ String *imageUrl = imageUrl_example; //  (default to null)
 Integer *width = 56; //  (optional) (default to null)
 Integer *height = 56; //  (optional) (default to null)
 ImageFormat *imageFormat = ; //  (optional) (default to null)
+ScaleType *scaleType = ; //  (optional) (default to null)
 
 // Resize
 [apiInstance resizeResizeGetWith:imageUrl
     width:width
     height:height
     imageFormat:imageFormat
+    scaleType:scaleType
               completionHandler: ^(oas_any_type_not_mapped output, NSError* error) {
     if (output) {
         NSLog(@"%@", output);
@@ -1075,7 +1088,8 @@ var imageUrl = imageUrl_example; // {String}
 var opts = {
   'width': 56, // {Integer} 
   'height': 56, // {Integer} 
-  'imageFormat':  // {ImageFormat} 
+  'imageFormat': , // {ImageFormat} 
+  'scaleType':  // {ScaleType} 
 };
 
 var callback = function(error, data, response) {
@@ -1112,10 +1126,11 @@ namespace Example
             var width = 56;  // Integer |  (optional)  (default to null)
             var height = 56;  // Integer |  (optional)  (default to null)
             var imageFormat = new ImageFormat(); // ImageFormat |  (optional)  (default to null)
+            var scaleType = new ScaleType(); // ScaleType |  (optional)  (default to null)
 
             try {
                 // Resize
-                oas_any_type_not_mapped result = apiInstance.resizeResizeGet(imageUrl, width, height, imageFormat);
+                oas_any_type_not_mapped result = apiInstance.resizeResizeGet(imageUrl, width, height, imageFormat, scaleType);
                 Debug.WriteLine(result);
             } catch (Exception e) {
                 Debug.Print("Exception when calling DefaultApi.resizeResizeGet: " + e.Message );
@@ -1136,9 +1151,10 @@ $imageUrl = imageUrl_example; // String |
 $width = 56; // Integer | 
 $height = 56; // Integer | 
 $imageFormat = ; // ImageFormat | 
+$scaleType = ; // ScaleType | 
 
 try {
-    $result = $api_instance->resizeResizeGet($imageUrl, $width, $height, $imageFormat);
+    $result = $api_instance->resizeResizeGet($imageUrl, $width, $height, $imageFormat, $scaleType);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling DefaultApi->resizeResizeGet: ', $e->getMessage(), PHP_EOL;
@@ -1157,9 +1173,10 @@ my $imageUrl = imageUrl_example; # String |
 my $width = 56; # Integer | 
 my $height = 56; # Integer | 
 my $imageFormat = ; # ImageFormat | 
+my $scaleType = ; # ScaleType | 
 
 eval {
-    my $result = $api_instance->resizeResizeGet(imageUrl => $imageUrl, width => $width, height => $height, imageFormat => $imageFormat);
+    my $result = $api_instance->resizeResizeGet(imageUrl => $imageUrl, width => $width, height => $height, imageFormat => $imageFormat, scaleType => $scaleType);
     print Dumper($result);
 };
 if ($@) {
@@ -1180,10 +1197,11 @@ imageUrl = imageUrl_example # String |  (default to null)
 width = 56 # Integer |  (optional) (default to null)
 height = 56 # Integer |  (optional) (default to null)
 imageFormat =  # ImageFormat |  (optional) (default to null)
+scaleType =  # ScaleType |  (optional) (default to null)
 
 try:
     # Resize
-    api_response = api_instance.resize_resize_get(imageUrl, width=width, height=height, imageFormat=imageFormat)
+    api_response = api_instance.resize_resize_get(imageUrl, width=width, height=height, imageFormat=imageFormat, scaleType=scaleType)
     pprint(api_response)
 except ApiException as e:
     print("Exception when calling DefaultApi->resizeResizeGet: %s\n" % e)</code></pre>
@@ -1197,9 +1215,10 @@ pub fn main() {
     let width = 56; // Integer
     let height = 56; // Integer
     let imageFormat = ; // ImageFormat
+    let scaleType = ; // ScaleType
 
     let mut context = DefaultApi::Context::default();
-    let result = client.resizeResizeGet(imageUrl, width, height, imageFormat, &context).wait();
+    let result = client.resizeResizeGet(imageUrl, width, height, imageFormat, scaleType, &context).wait();
 
     println!("{:?}", result);
 }
@@ -1287,6 +1306,23 @@ pub fn main() {
             <div class="primitive">
                 <span class="type">
                     ImageFormat
+                </span>
+
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">scale_type</td>
+<td>
+
+
+    <div id="d2e199_resizeResizeGet_scaleType">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    ScaleType
                 </span>
 
             </div>
