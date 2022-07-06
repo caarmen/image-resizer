@@ -1,6 +1,7 @@
 """
 Provide CRUD operations for resized images
 """
+import dataclasses
 from datetime import datetime
 
 from sqlalchemy.orm import Session
@@ -8,8 +9,20 @@ from sqlalchemy.orm import Session
 from imageresizer.repository import models
 
 
+@dataclasses.dataclass
+class ResizedImageLookup:
+    """
+    Fields which uniquely identify a resised image in the database
+    """
+
+    url: str
+    width: int = 0
+    height: int = 0
+    image_format: str = None
+
+
 def get_resized_image(
-    session: Session, url: str, width: int, height: int, image_format: str
+    session: Session, lookup: ResizedImageLookup
 ) -> models.ResizedImage:
     """
     Read the resized image with the matching url, width, height, and image format,
@@ -18,27 +31,27 @@ def get_resized_image(
     return (
         session.query(models.ResizedImage)
         .filter(
-            models.ResizedImage.url == url,
-            models.ResizedImage.width == width,
-            models.ResizedImage.height == height,
-            models.ResizedImage.image_format == image_format,
+            models.ResizedImage.url == lookup.url,
+            models.ResizedImage.width == lookup.width,
+            models.ResizedImage.height == lookup.height,
+            models.ResizedImage.image_format == lookup.image_format,
         )
         .first()
     )
 
 
 def create_resized_image(
-    session: Session, url: str, width: int, height: int, file: str, image_format: str
+    session: Session, lookup: ResizedImageLookup, file: str
 ) -> models.ResizedImage:
     """
     Create the resized image in the database
     """
     db_resized_image = models.ResizedImage(
-        url=url,
-        width=width,
-        height=height,
+        url=lookup.url,
+        width=lookup.width,
+        height=lookup.height,
+        image_format=lookup.image_format,
         file=file,
-        image_format=image_format,
         datetime=datetime.now(),
     )
     session.add(db_resized_image)

@@ -2,7 +2,6 @@
 Server that provides an endpoint to resize an image
 """
 import logging
-from pathlib import Path
 
 import uvicorn
 from fastapi import FastAPI
@@ -14,8 +13,7 @@ from imageresizer import purge
 from imageresizer.repository import models
 from imageresizer.repository.database import SessionLocal, engine
 from imageresizer.service import service
-from imageresizer.service.types import ImageFormat
-from imageresizer.settings import settings
+from imageresizer.service.types import ImageFormat, ResizedImageLookup
 
 logging.basicConfig(filename="image-resizer.log", level=logging.INFO)
 
@@ -60,7 +58,15 @@ async def resize(
 
     :return: a Response containing the new image
     """
-    resized_image = service.resize(db_session, image_url, width, height, image_format)
+    resized_image = service.resize(
+        db_session,
+        ResizedImageLookup(
+            url=image_url,
+            width=width,
+            height=height,
+            image_format=image_format,
+        ),
+    )
     return FileResponse(resized_image.file, media_type=resized_image.mime_type)
 
 

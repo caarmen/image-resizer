@@ -29,3 +29,15 @@ class ImageFormat(str, Enum):
     PNG = "png"
     TIFF = "tiff"
     WEBP = "webp"
+
+
+@dataclasses.dataclass
+class ResizedImageLookup:
+    """
+    Fields which uniquely identify a resised image in the database
+    """
+
+    url: str
+    width: int = 0
+    height: int = 0
+    image_format: ImageFormat = None

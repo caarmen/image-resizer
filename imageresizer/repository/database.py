@@ -7,10 +7,8 @@ from sqlalchemy.orm import sessionmaker
 
 from imageresizer.settings import settings
 
-db_dir = settings.cache_dir
-if not db_dir:
-    db_dir = "."
-SQLALCHEMY_DATABASE_URL = f"sqlite:///{db_dir}/image-resizer.db"
+DB_DIR = settings.cache_dir if settings.cache_image_dir else "."
+SQLALCHEMY_DATABASE_URL = f"sqlite:///{DB_DIR}/image-resizer.db"
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
 )

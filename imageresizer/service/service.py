@@ -8,12 +8,17 @@ from urllib.request import urlopen
 
 from PIL import Image
 from PIL.GifImagePlugin import GifImageFile
-from fastapi.params import Query
 from sqlalchemy.orm import Session
 
 from imageresizer.repository import crud
+from imageresizer.service import mapping
 from imageresizer.service.animatedimage import AnimatedImage
-from imageresizer.service.types import Size, ImageFormat, ImageResponseData
+from imageresizer.service.types import (
+    Size,
+    ImageFormat,
+    ImageResponseData,
+    ResizedImageLookup,
+)
 from imageresizer.settings import settings
 
 
@@ -54,47 +59,42 @@ def get_resized_size(
     return int(request_height * source_aspect_ratio), request_height
 
 
-def _get_mime_type(image_format: str) -> str:
+def _get_mime_type(image_format: ImageFormat) -> str:
     """
     :return: the mime type for the given image format
     """
-    if image_format == ImageFormat.PDF.value:
+    if image_format == ImageFormat.PDF:
         return "application/pdf"
     return f"image/{image_format}"
 
 
-def resize(
-    session: Session,
-    image_url: str,
-    width: int | None = Query(default=None, gt=0, lt=1024),
-    height: int | None = Query(default=None, gt=0, lt=1024),
-    image_format: ImageFormat | None = Query(default=None),
-) -> ImageResponseData:
+def resize(session: Session, lookup: ResizedImageLookup) -> ImageResponseData:
     """
     Resize an image.
 
     :param session: the database session
-    :param image_url: the url of the image to resize
-    :param width: the width of the new image
-    :param height: the height of the new image
-    :param image_format: the format of the resized image. Defaults to the format of the source image
-    :return: the path to the file containing the resized image
+    :param lookup: the lookup fields for the image
+    :return: the ImageResponse data for the resized image
     """
-    db_resized_image = crud.get_resized_image(
-        session, url=image_url, width=width, height=height, image_format=image_format
-    )
+
+    crud_lookup = mapping.map_lookup(lookup)
+    db_resized_image = crud.get_resized_image(session, crud_lookup)
     if db_resized_image and exists(db_resized_image.file):
         return ImageResponseData(
             db_resized_image.file, _get_mime_type(db_resized_image.image_format)
         )
-    with Image.open(urlopen(image_url)) as image:
+    with Image.open(urlopen(lookup.url)) as image:
         with NamedTemporaryFile(
             delete=False, dir=settings.cache_image_dir
         ) as output_file:
             resized_size = get_resized_size(
-                source_size=image.size, request_width=width, request_height=height
+                source_size=image.size,
+                request_width=lookup.width,
+                request_height=lookup.height,
             )
-            resized_image_format = image_format.name if image_format else image.format
+            resized_image_format = (
+                lookup.image_format.name if lookup.image_format else image.format
+            )
 
             if isinstance(image, GifImageFile) and image.n_frames:
                 image = AnimatedImage(image)
@@ -106,15 +106,8 @@ def resize(
                     session, db_resized_image, file=output_file.name
                 )
             else:
-                crud.create_resized_image(
-                    session,
-                    url=image_url,
-                    width=width,
-                    height=height,
-                    file=output_file.name,
-                    image_format=image_format,
-                )
+                crud.create_resized_image(session, crud_lookup, file=output_file.name)
 
             return ImageResponseData(
-                file=output_file.name, mime_type=_get_mime_type(image_format)
+                file=output_file.name, mime_type=_get_mime_type(resized_image_format)
             )

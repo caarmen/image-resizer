@@ -13,7 +13,9 @@ def _test_get_resized_size(
     expected_output_size: Size,
 ):
     actual_output_size = get_resized_size(
-        source_size=source_size, request_width=input_width, request_height=input_height
+        source_size=source_size,
+        request_width=input_width,
+        request_height=input_height,
     )
     assert expected_output_size == actual_output_size
 

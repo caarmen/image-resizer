@@ -17,8 +17,8 @@ class ResizedImage(Base):
     url = Column(String)
     width = Column(Integer)
     height = Column(Integer)
-    file = Column(String)
     image_format = Column(String)
+    file = Column(String)
     datetime = Column(DateTime)
 
 
