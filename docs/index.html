@@ -989,7 +989,7 @@ the requested width and height
                         <div class="tab-content">
                           <div class="tab-pane active" id="examples-Default-resizeResizeGet-0-curl">
                             <pre class="prettyprint"><code class="language-bsh">curl -X GET \
- -H "Accept: application/json" \
+ -H "Accept: application/json,image/png,image/gif,image/jpeg,image/tiff,image/webp,application/pdf" \
  "http://localhost/resize?image_url=imageUrl_example&width=56&height=56&image_format=&scale_type="
 </code></pre>
                           </div>
@@ -1369,7 +1369,13 @@ pub fn main() {
   "content" : {
     "application/json" : {
       "schema" : { }
-    }
+    },
+    "image/png" : { },
+    "image/gif" : { },
+    "image/jpeg" : { },
+    "image/tiff" : { },
+    "image/webp" : { },
+    "application/pdf" : { }
   }
 };
                                         var schema = findNode('schema',schemaWrapper).schema;
@@ -1397,6 +1403,50 @@ pub fn main() {
                                   </div>
                                   <input id='responses-Default-resizeResizeGet-200-schema-data' type='hidden' value=''></input>
                                 </div>
+                            </div>
+                            <h3 id="examples-Default-resizeResizeGet-title-400"></h3>
+                            <p id="examples-Default-resizeResizeGet-description-400" class="marked"></p>
+                            <script>
+                              var responseDefault400_description = `Invalid request parameters`;
+                              var responseDefault400_description_break = responseDefault400_description.indexOf('\n');
+                              if (responseDefault400_description_break == -1) {
+                                $("#examples-Default-resizeResizeGet-title-400").text("Status: 400 - " + responseDefault400_description);
+                              } else {
+                                $("#examples-Default-resizeResizeGet-title-400").text("Status: 400 - " + responseDefault400_description.substring(0, responseDefault400_description_break));
+                                $("#examples-Default-resizeResizeGet-description-400").html(responseDefault400_description.substring(responseDefault400_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Default-resizeResizeGet-400" class="nav nav-tabs nav-tabs-examples" >
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Default-resizeResizeGet-400-wrapper" style='margin-bottom: 10px;'>
+                            </div>
+                            <h3 id="examples-Default-resizeResizeGet-title-404"></h3>
+                            <p id="examples-Default-resizeResizeGet-description-404" class="marked"></p>
+                            <script>
+                              var responseDefault404_description = `image not found`;
+                              var responseDefault404_description_break = responseDefault404_description.indexOf('\n');
+                              if (responseDefault404_description_break == -1) {
+                                $("#examples-Default-resizeResizeGet-title-404").text("Status: 404 - " + responseDefault404_description);
+                              } else {
+                                $("#examples-Default-resizeResizeGet-title-404").text("Status: 404 - " + responseDefault404_description.substring(0, responseDefault404_description_break));
+                                $("#examples-Default-resizeResizeGet-description-404").html(responseDefault404_description.substring(responseDefault404_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Default-resizeResizeGet-404" class="nav nav-tabs nav-tabs-examples" >
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Default-resizeResizeGet-404-wrapper" style='margin-bottom: 10px;'>
                             </div>
                             <h3 id="examples-Default-resizeResizeGet-title-422"></h3>
                             <p id="examples-Default-resizeResizeGet-description-422" class="marked"></p>

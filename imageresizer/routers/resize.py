@@ -22,7 +22,27 @@ router = APIRouter(
 
 
 # pylint: disable=too-many-arguments
-@router.get("/resize")
+@router.get(
+    "/resize",
+    responses={
+        200: {
+            "content": {
+                "image/png": {},
+                "image/gif": {},
+                "image/jpeg": {},
+                "image/tiff": {},
+                "image/webp": {},
+                "application/pdf": {},
+            },
+        },
+        400: {
+            "description": "Invalid request parameters",
+        },
+        404: {
+            "description": "image not found",
+        },
+    },
+)
 async def resize(
     image_url: str,
     width: int | None = Query(default=None, gt=0, lt=1024),
