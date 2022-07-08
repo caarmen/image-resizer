@@ -45,6 +45,15 @@ to the folder inside the docker image where the image cache is stored (`/var/cac
 docker run --detach --volume /tmp/foo:/var/cache/image-resizer --publish 8000:8000 imageresizer
 ```
 
+#### Worker count
+
+By default, the server runs with one worker. To change this, specify the number of workers with the
+`WORKER_COUNT` environment variable. For example, to set 4 workers:
+
+```bash
+docker run --detach --env WORKER_COUNT=4 --publish 8000:8000 imageresizer
+```
+
 To stop the running imageresizer containers:
 
 ```bash
