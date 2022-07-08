@@ -14,8 +14,10 @@ from imageresizer.repository import models
 from imageresizer.repository.database import SessionLocal, engine
 from imageresizer.service import service
 from imageresizer.service.types import ImageFormat, ResizedImageLookup, ScaleType
+from imageresizer.settings import settings
 
 logging.basicConfig(filename="image-resizer.log", level=logging.INFO)
+logging.info("Started with settings %s", settings)
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -77,4 +79,10 @@ async def resize(
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(
+        "imageresizer.main:app",
+        host="0.0.0.0",
+        port=8000,
+        workers=settings.worker_count,
+        reload=False,
+    )
