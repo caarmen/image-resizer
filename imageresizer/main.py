@@ -2,12 +2,14 @@
 Server that provides an endpoint to resize an image
 """
 import logging
+from urllib.error import HTTPError
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.params import Query, Depends
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
+from starlette.requests import Request
 
 from imageresizer import purge
 from imageresizer.repository import models
@@ -42,6 +44,7 @@ with SessionLocal() as session:
 # pylint: disable=too-many-arguments
 @app.get("/resize")
 async def resize(
+    request: Request,
     image_url: str,
     width: int | None = Query(default=None, gt=0, lt=1024),
     height: int | None = Query(default=None, gt=0, lt=1024),
@@ -65,17 +68,25 @@ async def resize(
 
     :return: a Response containing the new image
     """
-    resized_image = service.resize(
-        db_session,
-        ResizedImageLookup(
-            url=image_url,
-            width=width,
-            height=height,
-            image_format=image_format,
-            scale_type=scale_type,
-        ),
-    )
-    return FileResponse(resized_image.file, media_type=resized_image.mime_type)
+    if request.headers.get("x-image-resizer"):
+        raise HTTPException(status_code=400, detail="Invalid image url")
+    try:
+        resized_image = service.resize(
+            db_session,
+            headers={
+                "x-image-resizer": "true",
+            },
+            lookup=ResizedImageLookup(
+                url=image_url,
+                width=width,
+                height=height,
+                image_format=image_format,
+                scale_type=scale_type,
+            ),
+        )
+        return FileResponse(resized_image.file, media_type=resized_image.mime_type)
+    except HTTPError as error:
+        raise HTTPException(status_code=error.status, detail=error.reason) from error
 
 
 if __name__ == "__main__":
