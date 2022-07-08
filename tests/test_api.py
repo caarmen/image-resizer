@@ -113,3 +113,13 @@ def test_resize_provided_height(test_image_uri):
     """
     response = client.get(f"/resize?image_url={test_image_uri}&height=50")
     _assert_expected_size(response, expected_size=(75, 50))
+
+
+def test_recursive_request_fails():
+    """
+    When the server receives a request with the x-image-resizer header, it returns an error response
+    """
+    response = client.get(
+        f"/resize?image_url={test_image_png_uri}", headers={"x-image-resizer": "foo"}
+    )
+    assert response.status_code == 400

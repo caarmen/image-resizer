@@ -4,7 +4,7 @@ Image resizing service
 from os.path import exists
 from tempfile import NamedTemporaryFile
 from typing import Optional
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 
 from PIL import Image
 from PIL.GifImagePlugin import GifImageFile
@@ -85,11 +85,14 @@ def _get_mime_type(image_format: ImageFormat) -> str:
     return f"image/{image_format}"
 
 
-def resize(session: Session, lookup: ResizedImageLookup) -> ImageResponseData:
+def resize(
+    session: Session, headers: dict[str, str], lookup: ResizedImageLookup
+) -> ImageResponseData:
     """
     Resize an image.
 
     :param session: the database session
+    :param headers: headers to use in the request to fetch time image
     :param lookup: the lookup fields for the image
     :return: the ImageResponse data for the resized image
     """
@@ -98,7 +101,7 @@ def resize(session: Session, lookup: ResizedImageLookup) -> ImageResponseData:
     db_resized_image = crud.get_resized_image(session, crud_lookup)
     if db_resized_image and exists(db_resized_image.file):
         return ImageResponseData(db_resized_image.file, db_resized_image.mime_type)
-    with Image.open(urlopen(lookup.url)) as image:
+    with Image.open(urlopen(Request(lookup.url, headers=headers))) as image:
         with NamedTemporaryFile(
             delete=False, dir=settings.cache_image_dir
         ) as output_file:
