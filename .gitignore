@@ -5,3 +5,5 @@ reports/
 image-resizer.db
 image-resizer.log
 purge.log
+*.rdb
+celerybeat-schedule
