@@ -10,7 +10,7 @@ from os.path import exists
 from sqlalchemy.orm import Session
 
 from imageresizer.repository import models
-from imageresizer.repository.database import SessionLocal, engine
+from imageresizer.repository.database import SessionLocal
 
 DEFAULT_MAX_AGE_S = 86400
 
@@ -52,6 +52,6 @@ if __name__ == "__main__":
         help="max age in seconds to keep in the database. Default is %(default)s",
     )
     options = parser.parse_args()
-    models.Base.metadata.create_all(bind=engine)
+    models.create_db()
     with SessionLocal() as db:
         purge_old_images(db, options.max_age)
