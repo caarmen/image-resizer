@@ -12,8 +12,11 @@ To run the server in a docker container, and have access to logs and cached data
 inside `/tmp/image-resizer`, use the Docker container hosted on Github packages:
 
 ```bash
+docker pull ghcr.io/caarmen/image-resizer:latest
+
 mkdir -p /tmp/image-resizer/cache
 mkdir -p /tmp/image-resizer/logs
+
 docker run \
     --volume /tmp/image-resizer/cache:/var/cache/image-resizer \
     --volume /tmp/image-resizer/logs:/var/log/image-resizer \
