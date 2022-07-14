@@ -12,27 +12,27 @@ class Settings(BaseSettings):
     Settings for the app
     """
 
-    log_folder: str = "."
-    cache_dir: str = None
+    log_dir: str = "."
+    cache_dir: str = "."
     cache_validity_s = 86400
     cache_clean_interval_s = 86400
 
-    def _create_log_folder(self):
-        Path(self.log_folder).mkdir(parents=True, exist_ok=True)
+    def _create_log_dir(self):
+        Path(self.log_dir).mkdir(parents=True, exist_ok=True)
 
     def get_log_absolute_path(self, filename) -> str:
         """
         :return: the path to the log file with the given name
         """
-        self._create_log_folder()
-        return str(Path(self.log_folder) / filename)
+        self._create_log_dir()
+        return str(Path(self.log_dir) / filename)
 
     @property
     def cache_image_dir(self) -> str:
         """
         :return: the path where image files will be stored
         """
-        return str(Path(self.cache_dir) / "images") if self.cache_dir else None
+        return str(Path(self.cache_dir) / "images")
 
 
 settings = Settings()

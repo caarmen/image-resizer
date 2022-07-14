@@ -6,16 +6,42 @@ An endpoint, using Fast API, that allows resizing an image.
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [<img src="https://github.com/caarmen/image-resizer/actions/workflows/tests.yml/badge.svg">](https://github.com/caarmen/image-resizer/actions?query=workflow%3A%22Run+tests%22++)
 
-## Run the server
+## TLDR quickstart
 
-### Locally
+To run the server in a docker container, and have access to logs and cached data on the host
+inside `/tmp/image-resizer`, use the Docker container hosted on Github packages:
 
 ```bash
-pip install -r requirements/prod.txt
-uvicorn imageresizer.main:app
+mkdir -p /tmp/image-resizer/cache
+mkdir -p /tmp/image-resizer/logs
+docker run \
+    --volume /tmp/image-resizer/cache:/var/cache/image-resizer \
+    --volume /tmp/image-resizer/logs:/var/log/image-resizer \
+    --detach \
+    --publish 8000:8000 \
+    --env WEB_CONCURRENCY=4 \
+    --env CACHE_VALIDITY_S=86400 \
+    --env CACHE_CLEAN_INTERVAL_S=86400 \
+    ghcr.io/caarmen/image-resizer
 ```
 
-### Using docker
+Then resize your first image here:
+
+http://localhost:8000/resize?image_url=https://github.githubassets.com/images/modules/logos_page/Octocat.png&height=300&width=100&image_format=webp
+
+## Building and running the server from sources
+
+### Running the server locally
+
+```bash
+git clone https://github.com/caarmen/image-resizer.git
+cd image-resizer
+# optional: command to create virtual environment
+pip install -r requirements/prod.txt
+python -m imageresizer.main
+```
+
+### Building the docker image
 
 ```bash
 git clone https://github.com/caarmen/image-resizer.git
@@ -24,25 +50,33 @@ docker build -t imageresizer .
 docker run --detach --publish 8000:8000 imageresizer
 ```
 
-#### Custom port
+## Server configuration options
 
-If you want the server to be available on a port other than `8000`,
-you can specify the port you want in the `--publish` argument.
+The following options are valid whether you downloaded the image from Github packages, built the Docker image locally,
+or are running the server directly on your machine.
 
-For example, to use port `8102` instead:
+The examples specify the image from Github packages `ghcr.io/caarmen/image-resizer`. If you built the image locally,
+use `imageresizer` instead.
+
+#### Cache and log folders
+
+By default, the server stores the cache data and logs in the root of the project when run locally, and in
+`/var/cache/image-resizer` and `/var/log/image-resizer` in the Docker container.
+
+You can change the location of the cache and logs locations with the `CACHE_DIR` and `LOG_DIR` environment variables.
+
+For example, to store cache and logs in `/tmp/image-resizer/cache` and `/tmp/image-resizer/logs`:
+
+Docker:
 
 ```bash
-docker run --detach --publish 8102:8000 imageresizer
+docker run --detach --volume /tmp/image-resizer/cache:/var/cache/image-resizer --volume /tmp/image-resizer/logs:/var/log/image-resizer --publish 8000:8000 ghcr.io/caarmen/image-resizer
 ```
 
-#### Custom cache folder
-
-If you want to store the image resizer cache on the host machine,
-you can specify this with the `--volume` argument, mapping the host folder you want (ex: `/tmp/foo`)
-to the folder inside the docker image where the image cache is stored (`/var/cache/image-resizer`):
+Local:
 
 ```bash
-docker run --detach --volume /tmp/foo:/var/cache/image-resizer --publish 8000:8000 imageresizer
+CACHE_DIR=/tmp/image-resizer/cache LOG_DIR=/tmp/image-resizer/logs python -m imageresizer.main
 ```
 
 #### Worker count
@@ -50,8 +84,16 @@ docker run --detach --volume /tmp/foo:/var/cache/image-resizer --publish 8000:80
 By default, the server runs with one worker. To change this, specify the number of workers with the
 `WEB_CONCURRENCY` environment variable. For example, to set 4 workers:
 
+Docker:
+
 ```bash
-docker run --detach --env WEB_CONCURRENCY=4 --publish 8000:8000 imageresizer
+docker run --detach --env WEB_CONCURRENCY=4 --publish 8000:8000 ghcr.io/caarmen/image-resizer
+```
+
+Local:
+
+```bash
+WEB_CONCURRENCY=4 python -m imageresizer.main
 ```
 
 #### Cache clean schedule
@@ -66,25 +108,49 @@ To change this:
 
 For example, to purge images older than one hour, every 2 minutes::
 
+Docker:
+
 ```bash
-docker run --detach --env CACHE_VALIDITY_S=3600 --env CACHE_CLEAN_INTERVAL_S=120 --publish 8000:8000 imageresizer
+docker run --detach --env CACHE_VALIDITY_S=3600 --env CACHE_CLEAN_INTERVAL_S=120 --publish 8000:8000 ghcr.io/caarmen/image-resizer
 ```
 
-#### Stopping the containers
+Local:
+
+```bash
+CACHE_VALIDITY_S=3600 CACHE_CLEAN_INTERVAL_S=120 python -m imageresizer.main
+```
+
+#### Server port
+
+By default, the server runs on port 8000. To set it to run on a different port, like `8102` for example:
+
+Docker:
+
+```bash
+docker run --detach --publish 8102:8000 ghcr.io/caarmen/image-resizer
+```
+
+Local:
+
+```bash
+UVICORN_PORT=8102 python -m imageresizer.main
+```
+
+#### Stopping the containers (Docker only)
 
 To stop the running imageresizer containers:
 
 ```bash
-for container in $(docker ps --filter ancestor=imageresizer --format="{{.ID}}"); do docker stop $container; done
+for container in $(docker ps --filter ancestor=ghcr.io/caarmen/image-resizer --format="{{.ID}}"); do docker stop $container; done
 ```
 
-To stop and delete all the imageresizer containers:
+To stop and delete all the imageresizer containers, a utility script is provided in this repository:
 
 ```bash
 bash scripts/docker_remove_containers.bash
 ```
 
-## Usage
+## API Usage
 
 Browse the api docs at http://127.0.0.1:8000/docs
 
@@ -93,20 +159,6 @@ Use the `resize` endpoint.
 Example resizing the [GitHub logo](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png) to 50x100:
 
 http://127.0.0.1:8000/resize?image_url=https%3A%2F%2Fgithub.githubassets.com%2Fimages%2Fmodules%2Flogos_page%2FGitHub-Mark.png&width=50&height=100
-
-## Deleting old images
-
-### Locally
-
-```bash
-python -m imageresizer.purge --max-age <age in seconds>
-```
-
-### Using docker
-
-```bash
-bash scripts/docker_purge_images.bash [max age in seconds (default is 86400)]
-```
 
 ## Generated API documentation
 
