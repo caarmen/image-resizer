@@ -12,7 +12,7 @@ from imageresizer.repository.database import SessionLocal
 from imageresizer.routers import resize
 from imageresizer.settings import settings
 
-logging.basicConfig(filename="image-resizer.log", level=logging.INFO)
+logging.basicConfig(filename=settings.get_log_absolute_path("image-resizer.log"), level=logging.INFO)
 logging.info("Started with settings %s", settings)
 
 models.create_db()

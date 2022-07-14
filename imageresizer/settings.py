@@ -12,7 +12,18 @@ class Settings(BaseSettings):
     Settings for the app
     """
 
+    log_folder: str = "."
     cache_dir: str = None
+
+    def _create_log_folder(self):
+        Path(self.log_folder).mkdir(parents=True, exist_ok=True)
+
+    def get_log_absolute_path(self, filename) -> str:
+        """
+        :return: the path to the log file with the given name
+        """
+        self._create_log_folder()
+        return str(Path(self.log_folder) / filename)
 
     @property
     def cache_image_dir(self) -> str:
