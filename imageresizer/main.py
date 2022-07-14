@@ -8,14 +8,14 @@ from fastapi import FastAPI
 
 from imageresizer import purge
 from imageresizer.repository import models
-from imageresizer.repository.database import SessionLocal, engine
+from imageresizer.repository.database import SessionLocal
 from imageresizer.routers import resize
 from imageresizer.settings import settings
 
 logging.basicConfig(filename="image-resizer.log", level=logging.INFO)
 logging.info("Started with settings %s", settings)
 
-models.Base.metadata.create_all(bind=engine)
+models.create_db()
 
 app = FastAPI(
     title="Image resizer",
