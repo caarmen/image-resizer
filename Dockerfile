@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 
 COPY imageresizer imageresizer
 
-CMD CACHE_DIR=/var/cache/image-resizer python -m imageresizer.main
+CMD CACHE_DIR=/var/cache/image-resizer LOG_DIR=/var/log/image-resizer python -m imageresizer.main
