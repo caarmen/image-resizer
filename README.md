@@ -54,6 +54,17 @@ By default, the server runs with one worker. To change this, specify the number 
 docker run --detach --env WEB_CONCURRENCY=4 --publish 8000:8000 imageresizer
 ```
 
+#### Cache clean schedule
+
+By default, when purging the cache, images older than 24 hours are deleted. To change this, set the
+`CACHE_VALIDITY_S` environment variable. For example, to purge images older than one hour:
+
+```bash
+docker run --detach --env CACHE_VALIDITY_S=3600 --publish 8000:8000 imageresizer
+```
+
+#### Stopping the containers
+
 To stop the running imageresizer containers:
 
 ```bash

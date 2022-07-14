@@ -14,6 +14,7 @@ class Settings(BaseSettings):
 
     log_folder: str = "."
     cache_dir: str = None
+    cache_validity_s = 86400
 
     def _create_log_folder(self):
         Path(self.log_folder).mkdir(parents=True, exist_ok=True)

@@ -13,16 +13,14 @@ from imageresizer.repository import models
 from imageresizer.repository.database import SessionLocal
 from imageresizer.settings import settings
 
-DEFAULT_MAX_AGE_S = 86400
 
-
-def purge_old_images(session: Session, max_age_seconds: int = DEFAULT_MAX_AGE_S):
+def purge_old_images(session: Session, max_age_seconds: int = None):
     """
     Delete resized image data from the db and the disk,
     for resized images created or updated before max_age_seconds ago
     """
     datetime_limit = datetime.datetime.now() - datetime.timedelta(
-        seconds=max_age_seconds
+        seconds=max_age_seconds if max_age_seconds else settings.cache_validity_s
     )
     logging.info("Deleting images created before %s", datetime_limit)
     resized_images_to_delete = session.query(models.ResizedImage).filter(
@@ -51,7 +49,7 @@ if __name__ == "__main__":
         "--max-age",
         dest="max_age",
         type=int,
-        default=DEFAULT_MAX_AGE_S,
+        default=settings.cache_validity_s,
         help="max age in seconds to keep in the database. Default is %(default)s",
     )
     options = parser.parse_args()
