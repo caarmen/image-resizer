@@ -12,7 +12,6 @@ class Settings(BaseSettings):
     Settings for the app
     """
 
-    worker_count: int = 1
     cache_dir: str = None
 
     @property

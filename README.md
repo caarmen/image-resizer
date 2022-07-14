@@ -48,10 +48,10 @@ docker run --detach --volume /tmp/foo:/var/cache/image-resizer --publish 8000:80
 #### Worker count
 
 By default, the server runs with one worker. To change this, specify the number of workers with the
-`WORKER_COUNT` environment variable. For example, to set 4 workers:
+`WEB_CONCURRENCY` environment variable. For example, to set 4 workers:
 
 ```bash
-docker run --detach --env WORKER_COUNT=4 --publish 8000:8000 imageresizer
+docker run --detach --env WEB_CONCURRENCY=4 --publish 8000:8000 imageresizer
 ```
 
 To stop the running imageresizer containers:

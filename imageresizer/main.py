@@ -32,6 +32,4 @@ if __name__ == "__main__":
         "imageresizer.main:app",
         host="0.0.0.0",
         port=8000,
-        workers=settings.worker_count,
-        reload=False,
     )
