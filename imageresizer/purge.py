@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 
 from imageresizer.repository import models
 from imageresizer.repository.database import SessionLocal
+from imageresizer.settings import settings
 
 DEFAULT_MAX_AGE_S = 86400
 
@@ -42,7 +43,7 @@ def purge_old_images(session: Session, max_age_seconds: int = DEFAULT_MAX_AGE_S)
 
 
 if __name__ == "__main__":
-    logging.basicConfig(filename="purge.log", level=logging.DEBUG)
+    logging.basicConfig(filename=settings.get_log_absolute_path("purge.log"), level=logging.DEBUG)
     parser = argparse.ArgumentParser(description="Purge old images")
     parser.add_argument(
         "--max-age",
