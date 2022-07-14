@@ -7,7 +7,6 @@ from sqlalchemy import Column, Integer, String, Index, DateTime
 from imageresizer.repository.database import Base, engine
 
 # pylint: disable=too-few-public-methods
-from imageresizer.repository.locker import Locker
 
 
 class ResizedImage(Base):
@@ -43,5 +42,4 @@ def create_db():
     """
     Creates the database if it doesn't already exist
     """
-    with Locker():
-        Base.metadata.create_all(bind=engine, checkfirst=True)
+    Base.metadata.create_all(bind=engine, checkfirst=True)

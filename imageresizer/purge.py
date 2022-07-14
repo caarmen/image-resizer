@@ -43,7 +43,9 @@ def purge_old_images(session: Session, max_age_seconds: int = DEFAULT_MAX_AGE_S)
 
 
 if __name__ == "__main__":
-    logging.basicConfig(filename=settings.get_log_absolute_path("purge.log"), level=logging.DEBUG)
+    logging.basicConfig(
+        filename=settings.get_log_absolute_path("purge.log"), level=logging.DEBUG
+    )
     parser = argparse.ArgumentParser(description="Purge old images")
     parser.add_argument(
         "--max-age",

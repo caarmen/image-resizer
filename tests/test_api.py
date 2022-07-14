@@ -10,7 +10,7 @@ from PIL import Image
 from fastapi.testclient import TestClient
 from requests import Response
 
-from imageresizer.main import app
+from imageresizer.main import app, setup
 from imageresizer.service.types import Size
 
 
@@ -23,6 +23,7 @@ def _get_test_image_uri(test_image_filename: str) -> str:
 
 test_image_png_uri = _get_test_image_uri("150x100.png")
 test_image_gif_uri = _get_test_image_uri("animated.gif")
+setup()
 client = TestClient(app)
 
 

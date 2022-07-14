@@ -12,22 +12,30 @@ from imageresizer.repository.database import SessionLocal
 from imageresizer.routers import resize
 from imageresizer.settings import settings
 
-logging.basicConfig(filename=settings.get_log_absolute_path("image-resizer.log"), level=logging.INFO)
+logging.basicConfig(
+    filename=settings.get_log_absolute_path("image-resizer.log"), level=logging.INFO
+)
 logging.info("Started with settings %s", settings)
-
-models.create_db()
 
 app = FastAPI(
     title="Image resizer",
     description="Api to reisze an image",
 )
 
-with SessionLocal() as session:
-    purge.purge_old_images(session)
-
 app.include_router(resize.router)
 
+
+def setup():
+    """
+    Prepare for the app to run
+    """
+    models.create_db()
+    with SessionLocal() as session:
+        purge.purge_old_images(session)
+
+
 if __name__ == "__main__":
+    setup()
     uvicorn.run(
         "imageresizer.main:app",
         host="0.0.0.0",

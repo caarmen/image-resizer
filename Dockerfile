@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 
 COPY imageresizer imageresizer
 
-CMD CACHE_DIR=/var/cache/image-resizer uvicorn --host 0.0.0.0 --port 8000 imageresizer.main:app
+CMD CACHE_DIR=/var/cache/image-resizer python -m imageresizer.main
