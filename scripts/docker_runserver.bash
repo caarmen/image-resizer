@@ -15,4 +15,5 @@ docker run \
     --env WEB_CONCURRENCY=4 \
     --env LOG_FOLDER=$container_log_dir \
     --env CACHE_VALIDITY_S=3600 \
+    --env CRON_SCHEDULE="* * * * *" \
     imageresizer

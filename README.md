@@ -56,11 +56,16 @@ docker run --detach --env WEB_CONCURRENCY=4 --publish 8000:8000 imageresizer
 
 #### Cache clean schedule
 
-By default, when purging the cache, images older than 24 hours are deleted. To change this, set the
-`CACHE_VALIDITY_S` environment variable. For example, to purge images older than one hour:
+By default, when purging the cache, the cache is cleaned nightly at 2:20 am, and images older than 24 hours are deleted.
+To change this:
+
+* set the `CACHE_VALIDITY_S` environment variable for the duration which images should be cached (in seconds).
+* set the `CRON_SCHEDULE` environment variable to specify the schedule for the cleaning task.
+
+For example, to purge images older than one hour, every 2 minutes::
 
 ```bash
-docker run --detach --env CACHE_VALIDITY_S=3600 --publish 8000:8000 imageresizer
+docker run --detach --env CACHE_VALIDITY_S=3600 --env CRON_SCHEDULE="*/2 * * * " --publish 8000:8000 imageresizer
 ```
 
 #### Stopping the containers
