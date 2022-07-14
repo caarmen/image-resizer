@@ -8,7 +8,6 @@ from fastapi import FastAPI
 
 from imageresizer import purge
 from imageresizer.repository import models
-from imageresizer.repository.database import SessionLocal
 from imageresizer.routers import resize
 from imageresizer.settings import settings
 
@@ -30,8 +29,7 @@ def setup():
     Prepare for the app to run
     """
     models.create_db()
-    with SessionLocal() as session:
-        purge.purge_old_images(session)
+    purge.schedule()
 
 
 if __name__ == "__main__":

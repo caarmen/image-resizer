@@ -6,12 +6,24 @@ import datetime
 import logging
 import os
 from os.path import exists
+from threading import Timer
 
 from sqlalchemy.orm import Session
 
 from imageresizer.repository import models
 from imageresizer.repository.database import SessionLocal
 from imageresizer.settings import settings
+
+
+def schedule():
+    """
+    Schedule a periodic purge of the image cache
+    """
+    with SessionLocal() as session:
+        purge_old_images(session)
+    timer = Timer(settings.cache_clean_interval_s, schedule)
+    timer.daemon = True
+    timer.start()
 
 
 def purge_old_images(session: Session, max_age_seconds: int = None):
