@@ -20,7 +20,7 @@ logging.info("Started with settings %s", settings)
 app = FastAPI(
     title="Image resizer",
     description="Api to reisze an image",
-    version="0.0.2",
+    version="0.0.3",
 )
 
 app.include_router(resize.router)
