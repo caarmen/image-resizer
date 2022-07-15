@@ -12,6 +12,10 @@ def _map_image_format(service_image_format: ImageFormat) -> crud.ImageFormat | N
     """
     Convert a service ImageFormat to a repository ImageFormat
     """
+    # I understand avoiding too many return statements if it can make the flow
+    # difficult to follow. In this case I don't think it's the case, so I
+    # ignore this lint rule here
+    # pylint: disable=too-many-return-statements
     match service_image_format:
         case ImageFormat.BMP:
             return crud.ImageFormat.BMP
