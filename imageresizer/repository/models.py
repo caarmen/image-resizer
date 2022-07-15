@@ -20,7 +20,7 @@ class ResizedImage(Base):
     width = Column(Integer)
     height = Column(Integer)
     # Would be better to have an enum for vaild image_format values
-    image_format = Column(String)
+    image_format = Column(Integer)
     scale_type = Column(Integer)
     file = Column(String)
     mime_type = Column(String)
