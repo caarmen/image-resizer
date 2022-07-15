@@ -1,1 +1,1 @@
-openapi-generator generate --input-spec http://localhost:8000/openapi.json --output docs --generator-name html2
+curl http://localhost:8000/openapi.json --output docs/openapi.json
