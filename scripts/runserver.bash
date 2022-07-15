@@ -1,1 +1,1 @@
-uvicorn imageresizer.main:app
+python -m imageresizer.main
