@@ -81,7 +81,7 @@ def update_resized_image(
     session: Session, db_resized_image: models.ResizedImage, file: str
 ) -> models.ResizedImage:
     """
-    Create the resized image's file and timestamp in the database
+    Update the resized image's file and timestamp in the database
     """
     db_resized_image.file = file
     db_resized_image.datetime = datetime.now()
