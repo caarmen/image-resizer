@@ -10,6 +10,20 @@ from sqlalchemy.orm import Session
 from imageresizer.repository import models
 
 
+class ImageFormat(Enum):
+    """
+    Supported image formats
+    """
+
+    BMP = 1
+    GIF = 2
+    JPEG = 3
+    PDF = 4
+    PNG = 5
+    TIFF = 6
+    WEBP = 7
+
+
 class ScaleType(Enum):
     """
     Supported scaling types
@@ -28,7 +42,7 @@ class ResizedImageLookup:
     url: str
     width: int = 0
     height: int = 0
-    image_format: str = None
+    image_format: ImageFormat = None
     scale_type: ScaleType = None
 
 
@@ -45,7 +59,9 @@ def get_resized_image(
             models.ResizedImage.url == lookup.url,
             models.ResizedImage.width == lookup.width,
             models.ResizedImage.height == lookup.height,
-            models.ResizedImage.image_format == lookup.image_format,
+            models.ResizedImage.image_format == lookup.image_format.value
+            if lookup.image_format
+            else None,
             models.ResizedImage.scale_type == lookup.scale_type.value,
         )
         .first()
@@ -65,7 +81,7 @@ def create_resized_image(
         url=lookup.url,
         width=lookup.width,
         height=lookup.height,
-        image_format=lookup.image_format,
+        image_format=lookup.image_format.value if lookup.image_format else None,
         scale_type=lookup.scale_type.value,
         file=file,
         mime_type=mime_type,
