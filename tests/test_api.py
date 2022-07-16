@@ -11,7 +11,7 @@ from fastapi.testclient import TestClient
 from requests import Response
 
 from imageresizer.main import app, setup
-from imageresizer.service.types import Size
+from imageresizer.service.geometry import Size
 
 
 def _get_test_image_uri(test_image_filename: str) -> str:

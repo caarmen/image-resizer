@@ -5,7 +5,7 @@ from typing import Optional
 
 import pytest
 
-from imageresizer.service.service import get_resized_size, Size
+from imageresizer.service.geometry import get_resized_size, Size
 from imageresizer.service.types import ScaleType
 
 

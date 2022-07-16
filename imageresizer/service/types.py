@@ -4,8 +4,6 @@ Image resizing service types
 import dataclasses
 from enum import Enum
 
-Size = tuple[int, int]
-
 
 @dataclasses.dataclass
 class ImageResponseData:
