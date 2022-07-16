@@ -36,6 +36,7 @@ class ScaleType(str, Enum):
 
     FIT_XY = "fit_xy"
     FIT_PRESERVE_ASPECT_RATIO = "fit_preserve_aspect_ratio"
+    CROP = "crop"
 
 
 @dataclasses.dataclass

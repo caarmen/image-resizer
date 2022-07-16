@@ -65,6 +65,47 @@ def _get_resize_geometry_fit_xy(
     return ResizeGeometry(size=(request_width, request_height))
 
 
+def _get_resize_geometry_crop(
+    source_size: Size,
+    request_width: Optional[int],
+    request_height: Optional[int],
+) -> ResizeGeometry:
+    # Resize the image so that it fills the requested size, without distorting the image,
+    # but cropping along one axis if the aspect ratio of the source is different from the
+    # requested aspect ratio
+    source_aspect_ratio = source_size[0] / source_size[1]
+    dest_aspect_ratio = request_width / request_height
+    if source_aspect_ratio > dest_aspect_ratio:
+        return ResizeGeometry(
+            size=(request_width, request_height),
+            box=Box(
+                left=int(
+                    (source_size[0] - (request_width * source_size[1] / request_height))
+                    / 2
+                ),
+                top=0,
+                right=int(
+                    (source_size[0] + (request_width * source_size[1] / request_height))
+                    / 2
+                ),
+                bottom=source_size[1],
+            ),
+        )
+    return ResizeGeometry(
+        size=(request_width, request_height),
+        box=Box(
+            left=0,
+            top=int(
+                (source_size[1] - (request_height * source_size[0] / request_width)) / 2
+            ),
+            right=source_size[0],
+            bottom=int(
+                (source_size[1] + (request_height * source_size[0] / request_width)) / 2
+            ),
+        ),
+    )
+
+
 def _get_resize_geometry_fit_preserve_aspect_ratio(
     source_size: Size,
     request_width: Optional[int],
@@ -120,6 +161,8 @@ def get_resize_geometry(
             return _get_resize_geometry_fit_xy(
                 source_size, request_width, request_height
             )
+        case ScaleType.CROP:
+            return _get_resize_geometry_crop(source_size, request_width, request_height)
         case _:  # ScaleType.FIT_PRESERVE_ASPECT_RATIO:
             return _get_resize_geometry_fit_preserve_aspect_ratio(
                 source_size, request_width, request_height

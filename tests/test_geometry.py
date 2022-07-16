@@ -66,6 +66,34 @@ def test_get_resize_geometry_valid_width_and_height_fit_preserve_aspect_ratio():
     )
 
 
+def test_get_resize_geometry_valid_width_and_height_crop():
+    """
+    When a valid width and height are provided with crop scale_type,
+    return the expected width and height
+    """
+    _test_get_resize_geometry(
+        (150, 100),
+        25,
+        75,
+        ScaleType.CROP,
+        ResizeGeometry(size=(25, 75), box=Box(left=58, top=0, right=91, bottom=100)),
+    )
+    _test_get_resize_geometry(
+        (150, 100),
+        750,
+        25,
+        ScaleType.CROP,
+        ResizeGeometry(size=(750, 25), box=Box(left=0, top=47, right=150, bottom=52)),
+    )
+    _test_get_resize_geometry(
+        (560, 560),
+        50,
+        100,
+        ScaleType.CROP,
+        ResizeGeometry(size=(50, 100), box=Box(left=140, top=0, right=420, bottom=560)),
+    )
+
+
 @pytest.mark.parametrize("scale_type", ScaleType)
 def test_get_resize_geometry_zero_width_and_height(scale_type: ScaleType):
     """

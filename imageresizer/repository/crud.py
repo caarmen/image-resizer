@@ -31,6 +31,7 @@ class ScaleType(Enum):
 
     FIT_XY = 1
     FIT_PRESERVE_ASPECT_RATIO = 2
+    CROP = 3
 
 
 @dataclasses.dataclass
