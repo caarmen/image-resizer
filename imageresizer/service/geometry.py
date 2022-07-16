@@ -3,9 +3,7 @@ Geometric calculations for resizing images
 """
 from typing import Optional
 
-from imageresizer.service.types import (
-    ScaleType,
-)
+from imageresizer.service.types import ScaleType
 
 Size = tuple[int, int]
 
