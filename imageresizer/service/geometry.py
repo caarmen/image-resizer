@@ -14,6 +14,24 @@ def _is_valid_dimension(dimension):
     return dimension is not None and dimension > 0
 
 
+def _get_resized_size_partial_requested_size(
+    source_size: Size,
+    request_width: Optional[int],
+    request_height: Optional[int],
+) -> Size:
+    # No dimensions requested: return the original size
+    if not request_width and not request_height:
+        return source_size
+
+    # Only one dimension requested: calculate the other one from
+    # the original aspect ratio and the one dimension which is provided
+    source_aspect_ratio = source_size[0] / source_size[1]
+    if request_width and not request_height:
+        return request_width, int(request_width / source_aspect_ratio)
+    # not request_width and request_height:
+    return int(request_height * source_aspect_ratio), request_height
+
+
 def _get_resized_size_fit_xy(
     _: Size,
     request_width: Optional[int],
@@ -60,17 +78,12 @@ def get_resized_size(
     """
     valid_width = _is_valid_dimension(request_width)
     valid_height = _is_valid_dimension(request_height)
-    # No dimensions requested: return the original size
-    if not valid_width and not valid_height:
-        return source_size
-
-    # Only one dimension requested: calculate the other one from
-    # the original aspect ratio and the one dimension which is provided
-    source_aspect_ratio = source_size[0] / source_size[1]
-    if valid_width and not valid_height:
-        return request_width, int(request_width / source_aspect_ratio)
-    if not valid_width and valid_height:
-        return int(request_height * source_aspect_ratio), request_height
+    if not valid_width or not valid_height:
+        return _get_resized_size_partial_requested_size(
+            source_size=source_size,
+            request_width=request_width if valid_width else None,
+            request_height=request_height if valid_height else None,
+        )
 
     # Both dimensions provided
     match scale_type:
