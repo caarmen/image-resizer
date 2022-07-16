@@ -64,7 +64,7 @@ async def resize(
     :param image_format: the format of the resized image. Defaults to the format of the source image
 
     :param scale_type: controls how the image should be resized to match
-    the requested width and height
+    the requested width and height. Ignored if either width or height are not provided.
 
     :return: a Response containing the new image
     """
