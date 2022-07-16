@@ -36,11 +36,8 @@ router = APIRouter(
                 "application/pdf": {},
             },
         },
-        HTTPStatus.BAD_REQUEST: {
-            "description": "Invalid request parameters",
-        },
-        HTTPStatus.NOT_FOUND: {
-            "description": "image not found",
+        HTTPStatus.UNPROCESSABLE_ENTITY: {
+            "description": "The request parameters were understood, but could not be processed",
         },
     },
 )

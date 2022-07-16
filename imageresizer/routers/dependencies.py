@@ -37,5 +37,5 @@ async def validate_not_recursive(request: Request):
     """
     if request.headers.get(CLIENT_HEADER):
         raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST, detail="Invalid image url"
+            status_code=HTTPStatus.UNPROCESSABLE_ENTITY, detail="Invalid image url"
         )

@@ -124,4 +124,4 @@ def test_recursive_request_fails():
     response = client.get(
         f"/resize?image_url={test_image_png_uri}", headers={"x-image-resizer": "foo"}
     )
-    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
