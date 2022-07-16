@@ -42,6 +42,8 @@ def _map_scale_type(service_scale_type: ScaleType) -> crud.ScaleType:
     match service_scale_type:
         case ScaleType.FIT_XY:
             return crud.ScaleType.FIT_XY
+        case ScaleType.CROP:
+            return crud.ScaleType.CROP
         case _:
             return crud.ScaleType.FIT_PRESERVE_ASPECT_RATIO
 

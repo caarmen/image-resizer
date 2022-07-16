@@ -1,6 +1,7 @@
 """
 Image resizing service
 """
+import dataclasses
 from os.path import exists
 from tempfile import NamedTemporaryFile
 from urllib.request import urlopen, Request
@@ -49,7 +50,7 @@ def resize(
         with NamedTemporaryFile(
             delete=False, dir=settings.cache_image_dir
         ) as output_file:
-            resized_size = geometry.get_resized_size(
+            resize_geometry = geometry.get_resize_geometry(
                 source_size=image.size,
                 request_width=lookup.width,
                 request_height=lookup.height,
@@ -58,11 +59,15 @@ def resize(
             resized_image_format = (
                 lookup.image_format.name if lookup.image_format else image.format
             )
-
             if isinstance(image, GifImageFile) and image.n_frames:
                 image = AnimatedImage(image)
 
-            image = image.resize(resized_size)
+            image = image.resize(
+                size=resize_geometry.size,
+                box=dataclasses.astuple(resize_geometry.box)
+                if resize_geometry.box
+                else None,
+            )
             image.save(output_file.name, resized_image_format)
             mime_type = _get_mime_type(resized_image_format)
             if db_resized_image:
