@@ -39,9 +39,11 @@ def _map_scale_type(service_scale_type: ScaleType) -> crud.ScaleType:
     """
     Convert a service ScaleType to a repository ScaleType
     """
-    if service_scale_type == ScaleType.FIT_XY:
-        return crud.ScaleType.FIT_XY
-    return crud.ScaleType.FIT_PRESERVE_ASPECT_RATIO
+    match service_scale_type:
+        case ScaleType.FIT_XY:
+            return crud.ScaleType.FIT_XY
+        case _:
+            return crud.ScaleType.FIT_PRESERVE_ASPECT_RATIO
 
 
 def map_lookup(service_lookup: ResizedImageLookup) -> crud.ResizedImageLookup:
