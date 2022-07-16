@@ -27,6 +27,28 @@ def _is_valid_dimension(dimension):
     return dimension is not None and dimension > 0
 
 
+def _get_resized_size_fit_xy(
+    _: Size,
+    request_width: Optional[int],
+    request_height: Optional[int],
+) -> Size:
+    return request_width, request_height
+
+
+def _get_resized_size_fit_preserve_aspect_ratio(
+    source_size: Size,
+    request_width: Optional[int],
+    request_height: Optional[int],
+) -> Size:
+    source_aspect_ratio = source_size[0] / source_size[1]
+    # Else fit the image inside the bounds of the requested dimensions,
+    # preserving the original aspect ratio
+    dest_aspect_ratio = request_width / request_height
+    if source_aspect_ratio > dest_aspect_ratio:
+        return request_width, int(request_width / source_aspect_ratio)
+    return int(request_height * source_aspect_ratio), request_height
+
+
 def get_resized_size(
     source_size: Size,
     request_width: Optional[int],
@@ -64,16 +86,13 @@ def get_resized_size(
         return int(request_height * source_aspect_ratio), request_height
 
     # Both dimensions provided
-
-    if scale_type == ScaleType.FIT_XY:
-        return request_width, request_height
-
-    # Else fit the image inside the bounds of the requested dimensions,
-    # preserving the original aspect ratio
-    dest_aspect_ratio = request_width / request_height
-    if source_aspect_ratio > dest_aspect_ratio:
-        return request_width, int(request_width / source_aspect_ratio)
-    return int(request_height * source_aspect_ratio), request_height
+    match scale_type:
+        case ScaleType.FIT_XY:
+            return _get_resized_size_fit_xy(source_size, request_width, request_height)
+        case _:  # ScaleType.FIT_PRESERVE_ASPECT_RATIO:
+            return _get_resized_size_fit_preserve_aspect_ratio(
+                source_size, request_width, request_height
+            )
 
 
 def _get_mime_type(image_format: ImageFormat) -> str:
