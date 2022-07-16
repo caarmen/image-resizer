@@ -22,7 +22,7 @@ def _test_get_resized_size(
         request_height=input_height,
         scale_type=input_scale_type,
     )
-    assert expected_output_size == actual_output_size
+    assert actual_output_size == expected_output_size
 
 
 @pytest.mark.parametrize("scale_type", ScaleType)
