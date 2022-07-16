@@ -1,6 +1,8 @@
 """
 Provides dependencies for routers
 """
+from http import HTTPStatus
+
 from fastapi import HTTPException
 from starlette.requests import Request
 
@@ -34,4 +36,6 @@ async def validate_not_recursive(request: Request):
     Validate that a request we received didn't come from our own server
     """
     if request.headers.get(CLIENT_HEADER):
-        raise HTTPException(status_code=400, detail="Invalid image url")
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST, detail="Invalid image url"
+        )

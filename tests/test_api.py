@@ -3,6 +3,7 @@ Api tests
 """
 import io
 import os
+from http import HTTPStatus
 from pathlib import Path
 
 import pytest
@@ -32,7 +33,7 @@ def test_missing_image_url():
     When I don't specify an image url, I get a 422 error code.
     """
     response = client.get("/resize")
-    assert response.status_code == 422
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 
 @pytest.mark.parametrize("test_image_uri", [test_image_png_uri, test_image_gif_uri])
@@ -41,7 +42,7 @@ def test_zero_width(test_image_uri):
     When I specify a zero width, I get a 422 error code
     """
     response = client.get(f"/resize?image_url={test_image_uri}&width=0")
-    assert response.status_code == 422
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 
 @pytest.mark.parametrize("test_image_uri", [test_image_png_uri, test_image_gif_uri])
@@ -50,7 +51,7 @@ def test_negative_width(test_image_uri):
     When I specify a negative width, I get a 422 error code
     """
     response = client.get(f"/resize?image_url={test_image_uri}&width=-1")
-    assert response.status_code == 422
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 
 @pytest.mark.parametrize("test_image_uri", [test_image_png_uri, test_image_gif_uri])
@@ -59,7 +60,7 @@ def test_zero_height(test_image_uri):
     When I specify a zero height, I get a 422 error code
     """
     response = client.get(f"/resize?image_url={test_image_uri}&height=0")
-    assert response.status_code == 422
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 
 @pytest.mark.parametrize("test_image_uri", [test_image_png_uri, test_image_gif_uri])
@@ -68,7 +69,7 @@ def test_negative_height(test_image_uri):
     When I specify a negative height, I get a 422 error code
     """
     response = client.get(f"/resize?image_url={test_image_uri}&height=-1")
-    assert response.status_code == 422
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 
 def _assert_expected_size(response: Response, expected_size: Size):
@@ -123,4 +124,4 @@ def test_recursive_request_fails():
     response = client.get(
         f"/resize?image_url={test_image_png_uri}", headers={"x-image-resizer": "foo"}
     )
-    assert response.status_code == 400
+    assert response.status_code == HTTPStatus.BAD_REQUEST

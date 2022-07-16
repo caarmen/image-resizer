@@ -2,6 +2,7 @@
 Resize router
 """
 from urllib.error import HTTPError
+from http import HTTPStatus
 
 from fastapi import APIRouter, HTTPException
 from fastapi.params import Query, Depends
@@ -25,7 +26,7 @@ router = APIRouter(
 @router.get(
     "/resize",
     responses={
-        200: {
+        HTTPStatus.OK: {
             "content": {
                 "image/png": {},
                 "image/gif": {},
@@ -35,10 +36,10 @@ router = APIRouter(
                 "application/pdf": {},
             },
         },
-        400: {
+        HTTPStatus.BAD_REQUEST: {
             "description": "Invalid request parameters",
         },
-        404: {
+        HTTPStatus.NOT_FOUND: {
             "description": "image not found",
         },
     },
