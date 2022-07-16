@@ -17,16 +17,17 @@ class AnimatedImage:
         self._source = source
         self._frames = []
 
-    def resize(self, size: Size):
+    def resize(self, size: Size, box: tuple | None):
         """
         Resize the frames of this image
         :param size: The requested size in pixels
+        :param box: The region in the source image to resize
         :return: this instance
         """
         for i in range(self._source.n_frames):
             self._source.seek(i)
             self._frames.append(
-                self._source.resize(size, resample=Image.Resampling.BICUBIC)
+                self._source.resize(size, box=box, resample=Image.Resampling.BICUBIC)
             )
         return self
 

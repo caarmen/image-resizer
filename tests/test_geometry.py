@@ -5,70 +5,88 @@ from typing import Optional
 
 import pytest
 
-from imageresizer.service.geometry import get_resized_size, Size
+from imageresizer.service.geometry import ResizeGeometry, get_resize_geometry, Size, Box
 from imageresizer.service.types import ScaleType
 
 
-def _test_get_resized_size(
+def _test_get_resize_geometry(
     source_size: Size,
     input_width: Optional[int],
     input_height: Optional[int],
     input_scale_type: ScaleType,
-    expected_output_size: Size,
+    expected_output_resize_geometry: ResizeGeometry,
 ):
-    actual_output_size = get_resized_size(
+    actual_output_resize_geometry = get_resize_geometry(
         source_size=source_size,
         request_width=input_width,
         request_height=input_height,
         scale_type=input_scale_type,
     )
-    assert actual_output_size == expected_output_size
+    assert actual_output_resize_geometry == expected_output_resize_geometry
 
 
 @pytest.mark.parametrize("scale_type", ScaleType)
-def test_get_resized_size_no_input(scale_type: ScaleType):
+def test_get_resize_geometry_no_input(scale_type: ScaleType):
     """
     When no width or height are provided, return the source size
     """
-    _test_get_resized_size((150, 100), None, None, scale_type, (150, 100))
+    _test_get_resize_geometry(
+        (150, 100), None, None, scale_type, ResizeGeometry(size=(150, 100))
+    )
 
 
-def test_get_resized_size_valid_width_and_height_fit_xy():
+def test_get_resize_geometry_valid_width_and_height_fit_xy():
     """
     When a valid width and height are provided with fit_xy scale type,
     return the provided width and height
     """
-    _test_get_resized_size((150, 100), 25, 75, ScaleType.FIT_XY, (25, 75))
+    _test_get_resize_geometry(
+        (150, 100), 25, 75, ScaleType.FIT_XY, ResizeGeometry(size=(25, 75))
+    )
 
 
-def test_get_resized_size_valid_width_and_height_fit_preserve_aspect_ratio():
+def test_get_resize_geometry_valid_width_and_height_fit_preserve_aspect_ratio():
     """
     When a valid width and height are provided with fit_preserve_aspect_ratio scale type,
     return the expected width and height
     """
-    _test_get_resized_size(
-        (150, 100), 25, 75, ScaleType.FIT_PRESERVE_ASPECT_RATIO, (25, 16)
+    _test_get_resize_geometry(
+        (150, 100),
+        25,
+        75,
+        ScaleType.FIT_PRESERVE_ASPECT_RATIO,
+        ResizeGeometry(size=(25, 16)),
     )
-    _test_get_resized_size(
-        (150, 100), 750, 25, ScaleType.FIT_PRESERVE_ASPECT_RATIO, (37, 25)
+    _test_get_resize_geometry(
+        (150, 100),
+        750,
+        25,
+        ScaleType.FIT_PRESERVE_ASPECT_RATIO,
+        ResizeGeometry(size=(37, 25)),
     )
 
 
 @pytest.mark.parametrize("scale_type", ScaleType)
-def test_get_resized_size_zero_width_and_height(scale_type: ScaleType):
+def test_get_resize_geometry_zero_width_and_height(scale_type: ScaleType):
     """
     When both width and height are zero, return the source size
     """
-    _test_get_resized_size((150, 100), 0, 0, scale_type, (150, 100))
+    _test_get_resize_geometry(
+        (150, 100), 0, 0, scale_type, ResizeGeometry(size=(150, 100))
+    )
 
 
 @pytest.mark.parametrize("scale_type", ScaleType)
-def test_get_resized_size_negative_width_and_height(scale_type: ScaleType):
+def test_get_resize_geometry_negative_width_and_height(scale_type: ScaleType):
     """
     When both width and height are negative, return the source size
     """
-    _test_get_resized_size((150, 100), -1, -1, scale_type, (150, 100))
-    _test_get_resized_size((150, 100), -5, -5, scale_type, (150, 100))
+    _test_get_resize_geometry(
+        (150, 100), -1, -1, scale_type, ResizeGeometry(size=(150, 100))
+    )
+    _test_get_resize_geometry(
+        (150, 100), -5, -5, scale_type, ResizeGeometry(size=(150, 100))
+    )
 
 
 @pytest.mark.parametrize("scale_type", ScaleType)
@@ -77,7 +95,9 @@ def test_get_missing_width(scale_type: ScaleType):
     When the width is missing, return the provided height with the width calculated
     from the aspect ratio of the source and the provided height
     """
-    _test_get_resized_size((150, 100), None, 50, scale_type, (75, 50))
+    _test_get_resize_geometry(
+        (150, 100), None, 50, scale_type, ResizeGeometry(size=(75, 50))
+    )
 
 
 @pytest.mark.parametrize("scale_type", ScaleType)
@@ -86,7 +106,9 @@ def test_get_zero_width(scale_type: ScaleType):
     When the width is zero, return the provided height with the width calculated
     from the aspect ratio of the source and the provided height
     """
-    _test_get_resized_size((150, 100), 0, 50, scale_type, (75, 50))
+    _test_get_resize_geometry(
+        (150, 100), 0, 50, scale_type, ResizeGeometry(size=(75, 50))
+    )
 
 
 @pytest.mark.parametrize("scale_type", ScaleType)
@@ -95,8 +117,12 @@ def test_get_negative_width(scale_type: ScaleType):
     When the width is negative, return the provided height with the width calculated
     from the aspect ratio of the source and the provided height
     """
-    _test_get_resized_size((150, 100), -1, 50, scale_type, (75, 50))
-    _test_get_resized_size((150, 100), -5, 50, scale_type, (75, 50))
+    _test_get_resize_geometry(
+        (150, 100), -1, 50, scale_type, ResizeGeometry(size=(75, 50))
+    )
+    _test_get_resize_geometry(
+        (150, 100), -5, 50, scale_type, ResizeGeometry(size=(75, 50))
+    )
 
 
 @pytest.mark.parametrize("scale_type", ScaleType)
@@ -105,7 +131,9 @@ def test_get_missing_height(scale_type: ScaleType):
     When the height is missing, return the provided width with the height calculated
     from the aspect ratio of the source and the provided width
     """
-    _test_get_resized_size((150, 100), 75, None, scale_type, (75, 50))
+    _test_get_resize_geometry(
+        (150, 100), 75, None, scale_type, ResizeGeometry(size=(75, 50))
+    )
 
 
 @pytest.mark.parametrize("scale_type", ScaleType)
@@ -114,7 +142,9 @@ def test_get_zero_height(scale_type: ScaleType):
     When the height is zero, return the provided width with the height calculated
     from the aspect ratio of the source and the provided width
     """
-    _test_get_resized_size((150, 100), 75, 0, scale_type, (75, 50))
+    _test_get_resize_geometry(
+        (150, 100), 75, 0, scale_type, ResizeGeometry(size=(75, 50))
+    )
 
 
 @pytest.mark.parametrize("scale_type", ScaleType)
@@ -123,5 +153,9 @@ def test_get_negative_height(scale_type: ScaleType):
     When the height is negative, return the provided width with the height calculated
     from the aspect ratio of the source and the provided width
     """
-    _test_get_resized_size((150, 100), 75, -1, scale_type, (75, 50))
-    _test_get_resized_size((150, 100), 75, -5, scale_type, (75, 50))
+    _test_get_resize_geometry(
+        (150, 100), 75, -1, scale_type, ResizeGeometry(size=(75, 50))
+    )
+    _test_get_resize_geometry(
+        (150, 100), 75, -5, scale_type, ResizeGeometry(size=(75, 50))
+    )
