@@ -36,6 +36,9 @@ router = APIRouter(
                 "application/pdf": {},
             },
         },
+        HTTPStatus.BAD_REQUEST: {
+            "description": "Invalid request parameters",
+        },
         HTTPStatus.UNPROCESSABLE_ENTITY: {
             "description": "The request parameters were understood, but could not be processed",
         },
@@ -86,4 +89,9 @@ async def resize(
     except URLError as error:
         raise HTTPException(
             status_code=HTTPStatus.UNPROCESSABLE_ENTITY, detail="Invalid image url"
+        ) from error
+    except ValueError as error:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Didn't understand your request parameters",
         ) from error
