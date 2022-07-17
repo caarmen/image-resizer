@@ -139,6 +139,25 @@ Local:
 UVICORN_PORT=8102 python -m imageresizer.main
 ```
 
+#### Supported image url schemas
+
+By default, only the https schema is allowed for image urls. To change this, set the `SUPPORTED_IMAGE_URL_SCHEMAS`
+environment variable.
+
+For example, to support both https and http:
+
+Docker:
+
+```bash
+docker run --env SUPPORTED_IMAGE_URL_SCHEMAS='["https","http"]' --detach --publish 8000:8000 ghcr.io/caarmen/image-resizer
+```
+
+Local:
+
+```bash
+SUPPORTED_IMAGE_URL_SCHEMAS='["https","http"]' python -m imageresizer.main
+```
+
 #### Stopping the containers (Docker only)
 
 To stop the running imageresizer containers:
