@@ -125,3 +125,23 @@ def test_recursive_request_fails():
         f"/resize?image_url={test_image_png_uri}", headers={"x-image-resizer": "foo"}
     )
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+
+
+def test_invalid_image_url_fails():
+    """
+    When the server receives a request with an invalid image_url parameter, it returns an
+    error response
+    """
+    response = client.get("/resize?image_url=whatisthis")
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+
+
+def test_inexistant_domain_fails():
+    """
+    When the server receives a request with an inexistant domain, it returns an
+    error response
+    """
+    response = client.get(
+        "/resize?image_url=https://somewebsite.thistlddoesntexist/image.png"
+    )
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
