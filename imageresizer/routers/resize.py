@@ -26,7 +26,7 @@ router = APIRouter(
 @router.get(
     "/resize",
     responses={
-        HTTPStatus.OK: {
+        200: {
             "content": {
                 "image/png": {},
                 "image/gif": {},
@@ -36,10 +36,10 @@ router = APIRouter(
                 "application/pdf": {},
             },
         },
-        HTTPStatus.BAD_REQUEST: {
+        400: {
             "description": "Invalid request parameters",
         },
-        HTTPStatus.UNPROCESSABLE_ENTITY: {
+        422: {
             "description": "The request parameters were understood, but could not be processed",
         },
     },
