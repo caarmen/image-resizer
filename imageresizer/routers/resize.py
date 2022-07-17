@@ -1,7 +1,8 @@
 """
 Resize router
 """
-from urllib.error import HTTPError
+from http import HTTPStatus
+from urllib.error import HTTPError, URLError
 
 from fastapi import APIRouter, HTTPException
 from fastapi.params import Query, Depends
@@ -25,7 +26,7 @@ router = APIRouter(
 @router.get(
     "/resize",
     responses={
-        200: {
+        HTTPStatus.OK: {
             "content": {
                 "image/png": {},
                 "image/gif": {},
@@ -35,11 +36,11 @@ router = APIRouter(
                 "application/pdf": {},
             },
         },
-        400: {
+        HTTPStatus.BAD_REQUEST: {
             "description": "Invalid request parameters",
         },
-        404: {
-            "description": "image not found",
+        HTTPStatus.UNPROCESSABLE_ENTITY: {
+            "description": "The request parameters were understood, but could not be processed",
         },
     },
 )
@@ -82,4 +83,15 @@ async def resize(
         )
         return FileResponse(resized_image.file, media_type=resized_image.mime_type)
     except HTTPError as error:
-        raise HTTPException(status_code=error.status, detail=error.reason) from error
+        raise HTTPException(
+            status_code=error.status, detail="Error retrieving image"
+        ) from error
+    except URLError as error:
+        raise HTTPException(
+            status_code=HTTPStatus.UNPROCESSABLE_ENTITY, detail="Invalid image url"
+        ) from error
+    except ValueError as error:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Didn't understand your request parameters",
+        ) from error

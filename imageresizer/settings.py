@@ -2,6 +2,7 @@
 Settings module
 """
 from pathlib import Path
+from typing import Set
 
 from pydantic import BaseSettings
 
@@ -16,6 +17,7 @@ class Settings(BaseSettings):
     cache_dir: str = "."
     cache_validity_s = 86400
     cache_clean_interval_s = 86400
+    supported_image_url_schemas: Set[str] = {"https"}
 
     def _create_log_dir(self):
         Path(self.log_dir).mkdir(parents=True, exist_ok=True)
