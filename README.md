@@ -158,6 +158,25 @@ Local:
 SUPPORTED_IMAGE_URL_SCHEMAS='["https","http"]' python -m imageresizer.main
 ```
 
+#### Allowed and denied domains
+
+By default, no restrictions are placed on the domains of image urls. To specifically deny a list of domains, or to
+specifically only allow a list of domains, set the `DENIED_DOMAINS` or `ALLOWED_DOMAINS` environment variables.
+
+For example, to ban resizing images on baddomain.com:
+
+Docker:
+
+```bash
+docker run --env DENIED_DOMAINS='["baddomain.com"]' --detach --publish 8000:8000 ghcr.io/caarmen/image-resizer
+```
+
+Local:
+
+```bash
+DENIED_DOMAINS='["baddomain.com"]' python -m imageresizer.main
+```
+
 #### Stopping the containers (Docker only)
 
 To stop the running imageresizer containers:
