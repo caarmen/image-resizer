@@ -13,6 +13,7 @@ from imageresizer.routers.dependencies import (
     get_session,
     validate_not_recursive,
     client_headers,
+    validate_allowed_domain,
     validate_supported_schema,
 )
 from imageresizer.service import service
@@ -22,6 +23,7 @@ router = APIRouter(
     dependencies=[
         Depends(validate_not_recursive),
         Depends(validate_supported_schema),
+        Depends(validate_allowed_domain),
     ],
 )
 

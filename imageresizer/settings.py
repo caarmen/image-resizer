@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     cache_validity_s = 86400
     cache_clean_interval_s = 86400
     supported_image_url_schemas: Set[str] = {"https"}
+    allowed_domains: Set[str] = set()
+    denied_domains: Set[str] = set()
 
     def _create_log_dir(self):
         Path(self.log_dir).mkdir(parents=True, exist_ok=True)

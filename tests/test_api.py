@@ -154,3 +154,12 @@ def test_invalid_scheme():
     """
     response = client.get("/resize?image_url=ftp://google.com/image.png")
     assert response.status_code == HTTPStatus.BAD_REQUEST
+
+
+def test_denied_domain():
+    """
+    When the server receives a request with a url with a denied domain, it
+    returns an error response
+    """
+    response = client.get("/resize?image_url=https://baddomain.com/image.png")
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY

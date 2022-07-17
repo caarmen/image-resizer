@@ -54,3 +54,19 @@ async def validate_supported_schema(request: Request):
                 status_code=HTTPStatus.BAD_REQUEST,
                 detail=f"Unsupported schema {parsed_url.scheme} for image url",
             )
+
+
+async def validate_allowed_domain(request: Request):
+    """
+    Validate that the domain of the image_url is allowed
+    """
+    if url := request.query_params.get("image_url"):
+        parsed_url = urlparse(url)
+        if parsed_url.hostname in settings.denied_domains or (
+            parsed_url.hostname not in settings.allowed_domains
+            and settings.allowed_domains
+        ):
+            raise HTTPException(
+                status_code=HTTPStatus.UNPROCESSABLE_ENTITY,
+                detail=f"Unsupported domain {parsed_url.hostname} for image url",
+            )
