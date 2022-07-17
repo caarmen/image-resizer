@@ -13,12 +13,16 @@ from imageresizer.routers.dependencies import (
     get_session,
     validate_not_recursive,
     client_headers,
+    validate_supported_schema,
 )
 from imageresizer.service import service
 from imageresizer.service.types import ImageFormat, ScaleType, ResizedImageLookup
 
 router = APIRouter(
-    dependencies=[Depends(validate_not_recursive)],
+    dependencies=[
+        Depends(validate_not_recursive),
+        Depends(validate_supported_schema),
+    ],
 )
 
 

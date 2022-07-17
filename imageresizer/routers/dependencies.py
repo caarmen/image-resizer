@@ -2,11 +2,13 @@
 Provides dependencies for routers
 """
 from http import HTTPStatus
+from urllib.parse import urlparse
 
 from fastapi import HTTPException
 from starlette.requests import Request
 
 from imageresizer.repository.database import SessionLocal
+from imageresizer.settings import settings
 
 CLIENT_HEADER = "x-image-resizer"
 
@@ -39,3 +41,16 @@ async def validate_not_recursive(request: Request):
         raise HTTPException(
             status_code=HTTPStatus.UNPROCESSABLE_ENTITY, detail="Invalid image url"
         )
+
+
+async def validate_supported_schema(request: Request):
+    """
+    Validate that the image_url uses a supported schema
+    """
+    if url := request.query_params.get("image_url"):
+        parsed_url = urlparse(url)
+        if parsed_url.scheme not in settings.supported_image_url_schemas:
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST,
+                detail=f"Unsupported schema {parsed_url.scheme} for image url",
+            )

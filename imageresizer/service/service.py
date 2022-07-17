@@ -4,7 +4,6 @@ Image resizing service
 import dataclasses
 from os.path import exists
 from tempfile import NamedTemporaryFile
-from urllib.parse import urlparse
 from urllib.request import urlopen, Request
 
 from PIL import Image
@@ -47,9 +46,7 @@ def resize(
     db_resized_image = crud.get_resized_image(session, crud_lookup)
     if db_resized_image and exists(db_resized_image.file):
         return ImageResponseData(db_resized_image.file, db_resized_image.mime_type)
-    parsed_url = urlparse(lookup.url)
-    if parsed_url.scheme not in settings.supported_image_url_schemas:
-        raise ValueError(f"Unsupported schema {parsed_url.scheme} for image url")
+
     with Image.open(urlopen(Request(lookup.url, headers=headers))) as image:
         with NamedTemporaryFile(
             delete=False, dir=settings.cache_image_dir
