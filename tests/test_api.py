@@ -145,3 +145,12 @@ def test_inexistant_domain_fails():
         "/resize?image_url=https://somewebsite.thistlddoesntexist/image.png"
     )
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+
+
+def test_invalid_scheme():
+    """
+    When the server receives a request with a url with a non supported scheme, it
+    returns an error response
+    """
+    response = client.get("/resize?image_url=ftp://google.com/image.png")
+    assert response.status_code == HTTPStatus.BAD_REQUEST
