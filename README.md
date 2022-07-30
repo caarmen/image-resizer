@@ -147,8 +147,8 @@ environment variables.
 | Documentation type | Environment variable | Default value |
 |--------------------|----------------------|---------------|
 | OpenAPI json       | `OPENAPI_URL`        | /openapi.json |
-| ReDoc              | `REDOC_URL`          | /redocs       |
-| Swagger UI         | `DOCS_URL`           | /docs       |
+| ReDoc              | `REDOC_URL`          | /redoc        |
+| Swagger UI         | `DOCS_URL`           | /docs         |
 
 Example to disable all documentation urls:
 
