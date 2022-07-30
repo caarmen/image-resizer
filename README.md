@@ -151,6 +151,7 @@ environment variables.
 | Swagger UI         | `DOCS_URL`           | /docs       |
 
 Example to disable all documentation urls:
+
 Docker:
 
 ```bash
