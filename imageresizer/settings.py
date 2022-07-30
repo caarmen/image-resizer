@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     supported_image_url_schemas: Set[str] = {"https"}
     allowed_domains: Set[str] = set()
     denied_domains: Set[str] = set()
+    openapi_url: str = "/openapi.json"
+    redoc_url: str = "/redoc"
+    docs_url: str = "/docs"
 
     def _create_log_dir(self):
         Path(self.log_dir).mkdir(parents=True, exist_ok=True)

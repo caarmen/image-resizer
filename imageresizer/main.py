@@ -20,7 +20,10 @@ logging.info("Started with settings %s", settings)
 app = FastAPI(
     title="Image resizer",
     description="Api to reisze an image",
-    version="0.0.6",
+    version="0.0.7",
+    openapi_url=settings.openapi_url,
+    redoc_url=settings.redoc_url,
+    docs_url=settings.docs_url,
 )
 
 app.include_router(resize.router)

@@ -139,6 +139,30 @@ Local:
 UVICORN_PORT=8102 python -m imageresizer.main
 ```
 
+#### Generated documentation urls
+
+The following generated documentation urls are exposed. They can be disabled by unsetting their
+environment variables.
+
+| Documentation type | Environment variable | Default value |
+|--------------------|----------------------|---------------|
+| OpenAPI json       | `OPENAPI_URL`        | /openapi.json |
+| ReDoc              | `REDOC_URL`          | /redocs       |
+| Swagger UI         | `DOCS_URL`           | /docs       |
+
+Example to disable all documentation urls:
+Docker:
+
+```bash
+docker run --detach --env OPENAPI_URL= --env REDOC_URL= --env DOCS_URL= --publish 8000:8000 ghcr.io/caarmen/image-resizer
+```
+
+Local:
+
+```bash
+OPENAPI_URL= REDOC_URL= DOCS_URL= python -m imageresizer.main
+```
+
 #### Supported image url schemas
 
 By default, only the https schema is allowed for image urls. To change this, set the `SUPPORTED_IMAGE_URL_SCHEMAS`
