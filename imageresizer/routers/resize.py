@@ -56,6 +56,7 @@ async def resize(
     height: int | None = Query(default=None, gt=0, lt=1024),
     image_format: ImageFormat | None = Query(default=None),
     scale_type: ScaleType | None = Query(default=ScaleType.FIT_XY),
+    user_agent: str | None = "image-resizer",
     db_session: Session = Depends(get_session),
     headers: dict = Depends(client_headers),
 ):
@@ -73,12 +74,14 @@ async def resize(
     :param scale_type: controls how the image should be resized to match
     the requested width and height. Ignored if either width or height are not provided.
 
+    :param user_agent: the User-Agent header value to pass to the request to get the image
+
     :return: a Response containing the new image
     """
     try:
         resized_image = service.resize(
             db_session,
-            headers=headers,
+            headers={**headers, "User-Agent": user_agent},
             lookup=ResizedImageLookup(
                 url=image_url,
                 width=width,
